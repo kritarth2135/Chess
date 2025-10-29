@@ -102,7 +102,7 @@ class Knight(Piece):
 class Pawn(Piece):
     name: str = "P"
     material: int = pieces[name]["material"]
-    
+
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Pawn.name]
