@@ -1,5 +1,6 @@
-from board import SIZE
 import re
+# from board import SIZE
+SIZE = 8
 
 class PositionTuple:
     # These are rank and file index, not actual rank and file
