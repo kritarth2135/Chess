@@ -1,6 +1,9 @@
 import helper
 
-symbols: list[dict[str: str]] = [
+from typing import Any
+
+
+symbols: list[dict[str, str]] = [
     {   # White (0)
         "K": "♔", "Q": "♕",
         "R": "♖", "B": "♗",
@@ -16,7 +19,7 @@ symbols: list[dict[str: str]] = [
     }
 ]
 
-pieces: dict[str: dict] = {
+pieces: dict[str, dict[str, Any]] = {
     "E": {"material": 0, "name": "Empty"},
     "K": {"material": float("inf"), "name": "King"},
     "Q": {"material": 9, "name": "Queen"},
@@ -27,7 +30,8 @@ pieces: dict[str: dict] = {
 }
 
 class Piece:
-    def __init__(self, color: int, position: tuple[int]):
+    def __init__(self, color: int, position: tuple[int, int]):
+        self.symbol: str
         self.color: int = color
         self.is_moved: bool = False
         self.position: helper.PositionTuple = helper.PositionTuple(position)
@@ -35,6 +39,7 @@ class Piece:
 class Empty(Piece):
     name: str = "E"
     material: int = pieces[name]["material"]
+    
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Empty.name]
@@ -42,59 +47,65 @@ class Empty(Piece):
 class King(Piece):
     name: str = "K"
     material: int = pieces[name]["material"]
+
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][King.name]
     
     def valid_moves(self) -> list[helper.PositionTuple]:
-        pass
+        ...
 
 class Queen(Piece):
     name: str = "Q"
     material: int = pieces[name]["material"]
+
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Queen.name]
     
     def valid_moves(self) -> list[helper.PositionTuple]:
-        pass
+        ...
 
 class Rook(Piece):
     name: str = "R"
     material: int = pieces[name]["material"]
+
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Rook.name]
     
     def valid_moves(self) -> list[helper.PositionTuple]:
-        pass
+        ...
 
 class Bishop(Piece):
     name: str = "B"
     material: int = pieces[name]["material"]
+
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Bishop.name]
     
     def valid_moves(self) -> list[helper.PositionTuple]:
-        pass
+        ...
 
 class Knight(Piece):
     name: str = "N"
     material: int = pieces[name]["material"]
+
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Knight.name]
 
     def valid_moves(self) -> list[helper.PositionTuple]:
-        pass
+        ...
 
 class Pawn(Piece):
     name: str = "P"
     material: int = pieces[name]["material"]
+    
     def __init__(self, color, position):
         super().__init__(color, position)
         self.symbol = symbols[color][Pawn.name]
     
     def valid_moves(self) -> list[helper.PositionTuple]:
-        pass
+        ...

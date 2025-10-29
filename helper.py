@@ -1,5 +1,6 @@
 import re
-# from board import SIZE
+
+
 SIZE = 8
 
 class PositionTuple:
@@ -33,7 +34,7 @@ class MovementTuple:
         print(f"(({self.initial.rank}, {self.initial.file}), ({self.final.rank}, {self.final.file}))")
 
 # Values to add to current position_tuple to find relative position_tuple
-RELATIVE_POSITIONS: dict[str: tuple] = {
+RELATIVE_POSITIONS: dict[str, PositionTuple] = {
     # Values to calculate ranks are reversed because grid is indexed from top to bottom
     "up": PositionTuple((-1, 0)), "down": PositionTuple((1, 0)),
     "left": PositionTuple((0, -1)), "right": PositionTuple((0, 1)),
@@ -72,11 +73,14 @@ def input_str_to_movement_tuple(input_str: str) -> MovementTuple | None:
     input_str = input_str.lower()
     if not input_str_validator(input_str):
         return None
-    input_str = input_str.split(",")
-    movement_tuple: list[PositionTuple] = []
-    for string in input_str:
-        movement_tuple.append(alg_notation_to_position_tuple(string))
-    return MovementTuple(tuple(movement_tuple))
+    
+    input_list = input_str.split(",")
+    movement_list: list[PositionTuple] = []
+
+    for string in input_list:
+        movement_list.append(alg_notation_to_position_tuple(string))
+    
+    return MovementTuple(tuple(movement_list))
 
 def number_to_Es_in_board_state(board_state: list[str]) -> list[str]:
     new_board_state: list[str] = []
