@@ -67,12 +67,13 @@ class Board:
         self.grid = grid
 
     def display(self) -> None:
-        print()
+        print("+", "----" * SIZE, "+", sep="")
         for rank in range(SIZE):
+            print(" | ", end="")
             for file in range(SIZE):
-                print(self.grid[rank][file].symbol, end = " ")
+                print(self.grid[rank][file].symbol, end = " | ")
             print()
-        print()
+            print("+", "----" * SIZE, "+", sep="")
 
     def move(self):
         pass
