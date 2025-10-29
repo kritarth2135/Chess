@@ -1,4 +1,4 @@
-import helper as h
+import helper
 
 symbols: list[dict[str: str]] = [
     {   # White (0)
@@ -30,7 +30,7 @@ class Piece:
     def __init__(self, color: int, position: tuple[int]):
         self.color: int = color
         self.is_moved: bool = False
-        self.position: h.PositionTuple = h.PositionTuple(position)
+        self.position: helper.PositionTuple = helper.PositionTuple(position)
 
 class Empty(Piece):
     name: str = "E"
@@ -46,7 +46,7 @@ class King(Piece):
         super().__init__(color, position)
         self.symbol = symbols[color][King.name]
     
-    def valid_moves(self) -> list[h.PositionTuple]:
+    def valid_moves(self) -> list[helper.PositionTuple]:
         pass
 
 class Queen(Piece):
@@ -56,7 +56,7 @@ class Queen(Piece):
         super().__init__(color, position)
         self.symbol = symbols[color][Queen.name]
     
-    def valid_moves(self) -> list[h.PositionTuple]:
+    def valid_moves(self) -> list[helper.PositionTuple]:
         pass
 
 class Rook(Piece):
@@ -66,7 +66,7 @@ class Rook(Piece):
         super().__init__(color, position)
         self.symbol = symbols[color][Rook.name]
     
-    def valid_moves(self) -> list[h.PositionTuple]:
+    def valid_moves(self) -> list[helper.PositionTuple]:
         pass
 
 class Bishop(Piece):
@@ -76,7 +76,7 @@ class Bishop(Piece):
         super().__init__(color, position)
         self.symbol = symbols[color][Bishop.name]
     
-    def valid_moves(self) -> list[h.PositionTuple]:
+    def valid_moves(self) -> list[helper.PositionTuple]:
         pass
 
 class Knight(Piece):
@@ -86,7 +86,7 @@ class Knight(Piece):
         super().__init__(color, position)
         self.symbol = symbols[color][Knight.name]
 
-    def valid_moves(self) -> list[h.PositionTuple]:
+    def valid_moves(self) -> list[helper.PositionTuple]:
         pass
 
 class Pawn(Piece):
@@ -96,5 +96,5 @@ class Pawn(Piece):
         super().__init__(color, position)
         self.symbol = symbols[color][Pawn.name]
     
-    def valid_moves(self) -> list[h.PositionTuple]:
+    def valid_moves(self) -> list[helper.PositionTuple]:
         pass

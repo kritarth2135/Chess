@@ -1,5 +1,5 @@
-import pieces as p
-import helper as h
+import pieces
+import helper
 
 # Length of the square chess grid 
 SIZE: int = 8
@@ -35,33 +35,33 @@ class Board:
                 case "q":
                     self.castling_availability[BLACK_QUEENSIDE] = True
 
-        piece_placement: list[str] = h.number_to_Es_in_board_state(board_state.split("/"))
-        grid: list[list[p.Piece]] = []
+        piece_placement: list[str] = helper.number_to_Es_in_board_state(board_state.split("/"))
+        grid: list[list[pieces.Piece]] = []
         for rank in range(SIZE):
-            temp_list: list[p.Piece] = []
+            temp_list: list[pieces.Piece] = []
             for file in range(SIZE):
                 piece = piece_placement[rank][file]
                 position = (rank, file)
                 if piece in ["K", "k"]:
-                    piece = p.King(WHITE if piece.isupper() else BLACK, position)
+                    piece = pieces.King(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
                 elif piece in ["Q", "q"]:
-                    piece = p.Queen(WHITE if piece.isupper() else BLACK, position)
+                    piece = pieces.Queen(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
                 elif piece in ["R", "r"]:
-                    piece = p.Rook(WHITE if piece.isupper() else BLACK, position)
+                    piece = pieces.Rook(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
                 elif piece in ["B", "b"]:
-                    piece = p.Bishop(WHITE if piece.isupper() else BLACK, position)
+                    piece = pieces.Bishop(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
                 elif piece in ["N", "n"]:
-                    piece = p.Knight(WHITE if piece.isupper() else BLACK, position)
+                    piece = pieces.Knight(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
-                elif piece in ["P", "p"]:
-                    piece = p.Pawn(WHITE if piece.isupper() else BLACK, position)
+                elif piece in ["P", "pieces"]:
+                    piece = pieces.Pawn(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
                 else:
-                    piece = p.Empty(EMPTY, position)
+                    piece = pieces.Empty(EMPTY, position)
                     temp_list.append(piece)
             grid.append(temp_list)
         self.grid = grid
