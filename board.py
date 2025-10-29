@@ -1,6 +1,7 @@
 import pieces
 import helper
 
+
 # Length of the square chess grid 
 SIZE: int = 8
 # Players
@@ -25,15 +26,17 @@ class Board:
         
         self.castling_availability: list[bool] = [False, False, False, False]
         for ch in castling:
-            match ch:
-                case "K":
-                    self.castling_availability[WHITE_KINGSIDE] = True
-                case "Q":
-                    self.castling_availability[WHITE_QUEENSIDE] = True
-                case "k":
-                    self.castling_availability[BLACK_KINGSIDE] = True
-                case "q":
-                    self.castling_availability[BLACK_QUEENSIDE] = True
+            if ch == "K":
+                self.castling_availability[WHITE_KINGSIDE] = True
+            
+            elif ch == "Q":
+                self.castling_availability[WHITE_QUEENSIDE] = True
+            
+            elif ch == "k":
+                self.castling_availability[BLACK_KINGSIDE] = True
+
+            elif ch == "q":
+                self.castling_availability[BLACK_QUEENSIDE] = True
 
         piece_placement: list[str] = helper.number_to_Es_in_board_state(board_state.split("/"))
         grid: list[list[pieces.Piece]] = []
