@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 import re
-# from board import SIZE
+
+from typing import Any
+
+
 SIZE = 8
 
 class PositionTuple:
@@ -9,18 +14,15 @@ class PositionTuple:
         self.file = position[1]
         self.position = position
     
-    def __add__(self, other):
+    def __add__(self, other: PositionTuple):
         rank = self.rank + other.rank
         file = self.file + other.file
         return PositionTuple((rank, file))
     
-    def __eq__(self, other) -> bool:
-        if self.rank == other.rank and self.file == other.file:
-            return True
-        else:
-            return False
+    def __eq__(self, other: PositionTuple | Any) -> bool:
+        return self.rank == other.rank and self.file == other.file
     
-    def display(self):
+    def display(self) -> None:
         print(f"({self.rank}, {self.file})")
         
 class MovementTuple:
@@ -29,11 +31,11 @@ class MovementTuple:
         self.final = movement[1]
         self.movement = movement
 
-    def display(self):
+    def display(self) -> None:
         print(f"(({self.initial.rank}, {self.initial.file}), ({self.final.rank}, {self.final.file}))")
 
 # Values to add to current position_tuple to find relative position_tuple
-RELATIVE_POSITIONS: dict[str: tuple] = {
+RELATIVE_POSITIONS: dict[str, PositionTuple] = {
     # Values to calculate ranks are reversed because grid is indexed from top to bottom
     "up": PositionTuple((-1, 0)), "down": PositionTuple((1, 0)),
     "left": PositionTuple((0, -1)), "right": PositionTuple((0, 1)),
@@ -63,20 +65,21 @@ def input_str_validator(input_str: str) -> bool:
     # Input regex
     regex_pattern = "([a-h][0-8]),([a-h][0-8])"
     # Input format: <start_square>,<end_square>
-    if not re.fullmatch(regex_pattern, input_str):
-        return False
-    else:
-        return True
+    
+    return not bool(re.fullmatch(regex_pattern, input_str))
 
 def input_str_to_movement_tuple(input_str: str) -> MovementTuple | None:
     input_str = input_str.lower()
     if not input_str_validator(input_str):
         return None
-    input_str = input_str.split(",")
-    movement_tuple: list[PositionTuple] = []
-    for string in input_str:
-        movement_tuple.append(alg_notation_to_position_tuple(string))
-    return MovementTuple(tuple(movement_tuple))
+    
+    input_list = input_str.split(",")
+    movement_list: list[PositionTuple] = []
+
+    for string in input_list:
+        movement_list.append(alg_notation_to_position_tuple(string))
+    
+    return MovementTuple(tuple(movement_list))
 
 def number_to_Es_in_board_state(board_state: list[str]) -> list[str]:
     new_board_state: list[str] = []
