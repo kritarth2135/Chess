@@ -1,5 +1,5 @@
 # Chess
-This is a chess game made in pyhthon.
+This is a chess game made in python.
 
 ## Features
 What you __can__ do now:
