@@ -1,5 +1,6 @@
 import pieces
 import helper
+import errors
 
 SIZE: int = helper.SIZE
 EMPTY: int = helper.EMPTY
@@ -75,14 +76,25 @@ class Board:
         self.grid = grid
 
     def display(self) -> None:
-        print("+---" * SIZE, "+", sep="")
+        print("+---" * (SIZE + 1), "+", sep="")
+        print("|   | A | B | C | D | E | F | G | H |")
+        print("+---" * (SIZE + 1), "+", sep="")
         for rank in range(SIZE):
-            print("| ", end="")
+            print(f"| {SIZE - rank} | ", end="")
             for file in range(SIZE):
                 print(self.grid[rank][file].symbol, end = " | ")
             print()
-            print("+---" * SIZE, "+", sep="")
+            print("+---" * (SIZE + 1), "+", sep="")
 
-    def move(self):
-        pass
+    def move(self, movement_tuple: helper.MovementTuple) -> None:
+        initial_position: helper.PositionTuple = movement_tuple.initial
+        final_position: helper.PositionTuple = movement_tuple.final
 
+        piece_moved_explicitly: pieces.Piece = self.grid[initial_position.rank][initial_position.file]
+        valid_moves: list[helper.PositionTuple] = piece_moved_explicitly.valid_moves()
+        if final_position in valid_moves:
+            piece_moved_implicitly: pieces.Piece = self.grid[final_position.rank][final_position.file]
+            self.grid[initial_position.rank][initial_position.file] = piece_moved_implicitly
+            self.grid[final_position.rank][final_position.file] = piece_moved_explicitly
+        else:
+            raise errors.InvalidMove

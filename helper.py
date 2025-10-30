@@ -1,6 +1,7 @@
 from __future__ import annotations
 import re
 from typing import Any
+import errors
 
 # Length of the square chess grid 
 SIZE: int = 8
@@ -81,12 +82,12 @@ def input_str_validator(input_str: str) -> bool:
     regex_pattern = "([a-h][0-8]),([a-h][0-8])"
     # Input format: <start_square>,<end_square>
     
-    return not bool(re.fullmatch(regex_pattern, input_str))
+    return bool(re.fullmatch(regex_pattern, input_str))
 
-def input_str_to_movement_tuple(input_str: str) -> MovementTuple | None:
+def input_str_to_movement_tuple(input_str: str) -> MovementTuple:
     input_str = input_str.lower()
     if not input_str_validator(input_str):
-        return None
+        raise errors.InvalidInput
     
     input_list = input_str.split(",")
     movement_list: list[PositionTuple] = []
