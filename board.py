@@ -60,7 +60,7 @@ class Board:
                 elif piece in ["N", "n"]:
                     piece = pieces.Knight(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
-                elif piece in ["P", "pieces"]:
+                elif piece in ["P", "p"]:
                     piece = pieces.Pawn(WHITE if piece.isupper() else BLACK, position)
                     temp_list.append(piece)
                 else:
@@ -80,3 +80,4 @@ class Board:
 
     def move(self):
         pass
+
