@@ -1,11 +1,13 @@
 from __future__ import annotations
-
 import re
-
 from typing import Any
 
-
-SIZE = 8
+# Length of the square chess grid 
+SIZE: int = 8
+# Players
+EMPTY: int = -1
+WHITE: int = 0
+BLACK: int = 1
 
 class PositionTuple:
     # These are rank and file index, not actual rank and file
@@ -22,6 +24,9 @@ class PositionTuple:
     def __eq__(self, other: PositionTuple | Any) -> bool:
         return self.rank == other.rank and self.file == other.file
     
+    def on_same_rank_or_file(self, other: PositionTuple | Any) -> bool:
+        return self.rank == other.rank or self.file == other.file
+    
     def display(self) -> None:
         print(f"({self.rank}, {self.file})")
         
@@ -35,16 +40,26 @@ class MovementTuple:
         print(f"(({self.initial.rank}, {self.initial.file}), ({self.final.rank}, {self.final.file}))")
 
 # Values to add to current position_tuple to find relative position_tuple
-RELATIVE_POSITIONS: dict[str, PositionTuple] = {
+DIRECTIONS: dict[str, PositionTuple] = {
     # Values to calculate ranks are reversed because grid is indexed from top to bottom
     "up": PositionTuple((-1, 0)), "down": PositionTuple((1, 0)),
     "left": PositionTuple((0, -1)), "right": PositionTuple((0, 1)),
     "up_left": PositionTuple((-1, -1)), "up_right": PositionTuple((-1, 1)),
     "down_left": PositionTuple((1, -1)), "down_right": PositionTuple((1, 1))
 }
+RELATIVE_POSITIONS: dict[str, list[str]] = {
+    "all": ["up", "down", "left", "right", "up_left", "up_right", "down_left", "down_right"],
+    "straight": ["up", "down", "left", "right"],
+    "diagonal": ["up_left", "up_right", "down_left", "down_right"]
+}
+ALL: str = "all"
+STRAIGHT: str = "straight"
+DIAGONAL: str = "diagonal"
 
-def relative_position(position: PositionTuple, dir: str) -> PositionTuple | None:
-    relative_position = position + RELATIVE_POSITIONS[dir]
+def get_relative_position(position: PositionTuple, dir: str) -> PositionTuple | None:
+    if not position:
+        return None
+    relative_position = position + DIRECTIONS[dir]
     if is_out_of_bounds(relative_position):
         return None
     return relative_position
