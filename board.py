@@ -1,13 +1,10 @@
 import pieces
 import helper
 
-
-# Length of the square chess grid 
-SIZE: int = 8
-# Players
-EMPTY: int = -1
-WHITE: int = 0
-BLACK: int = 1
+SIZE: int = helper.SIZE
+EMPTY: int = helper.EMPTY
+WHITE: int = helper.WHITE
+BLACK: int = helper.BLACK
 
 # Casling availability indexes
 WHITE_KINGSIDE: int = 0
@@ -45,27 +42,35 @@ class Board:
             for file in range(SIZE):
                 piece = piece_placement[rank][file]
                 position = (rank, file)
+                
                 if piece in ["K", "k"]:
-                    piece = pieces.King(WHITE if piece.isupper() else BLACK, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.King(WHITE if piece.isupper() else BLACK, position)
+                    temp_list.append(temp_piece)
+
                 elif piece in ["Q", "q"]:
-                    piece = pieces.Queen(WHITE if piece.isupper() else BLACK, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.Queen(WHITE if piece.isupper() else BLACK, position)
+                    temp_list.append(temp_piece)
+
                 elif piece in ["R", "r"]:
-                    piece = pieces.Rook(WHITE if piece.isupper() else BLACK, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.Rook(WHITE if piece.isupper() else BLACK, position)
+                    temp_list.append(temp_piece)
+
                 elif piece in ["B", "b"]:
-                    piece = pieces.Bishop(WHITE if piece.isupper() else BLACK, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.Bishop(WHITE if piece.isupper() else BLACK, position)
+                    temp_list.append(temp_piece)
+
                 elif piece in ["N", "n"]:
-                    piece = pieces.Knight(WHITE if piece.isupper() else BLACK, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.Knight(WHITE if piece.isupper() else BLACK, position)
+                    temp_list.append(temp_piece)
+
                 elif piece in ["P", "p"]:
-                    piece = pieces.Pawn(WHITE if piece.isupper() else BLACK, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.Pawn(WHITE if piece.isupper() else BLACK, position)
+                    temp_list.append(temp_piece)
+
                 else:
-                    piece = pieces.Empty(EMPTY, position)
-                    temp_list.append(piece)
+                    temp_piece = pieces.Empty(EMPTY, position)
+                    temp_list.append(temp_piece)
+
             grid.append(temp_list)
         self.grid = grid
 
@@ -80,5 +85,4 @@ class Board:
 
     def move(self):
         pass
-
 
