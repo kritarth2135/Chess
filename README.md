@@ -11,7 +11,7 @@ What you __cannot__ do now:
 ## How to play:
 First, clone this repository and then run:
 ```
-python chess.py
+python main.py
 ```
 
 ## User input format
