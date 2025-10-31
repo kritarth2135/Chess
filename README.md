@@ -23,7 +23,7 @@ Input is taken as follows, __without__ any space in between
 ```
 A square is denoted by the following:
 ```
-<rank><file> // algebric notation
+<rank><file> // algebraic notation
 ```
 where ranks (horizontal rows) are from 1 to 8 (bottom to top), and files (vertical columns) from A to H (left to right).
 
