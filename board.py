@@ -1,6 +1,7 @@
 import pieces
 import helper
 import errors
+import random
 
 SIZE: int = helper.SIZE
 EMPTY: int = helper.EMPTY
@@ -94,7 +95,11 @@ class Board:
         valid_moves: list[helper.PositionTuple] = piece_moved_explicitly.valid_moves()
         if final_position in valid_moves:
             piece_moved_implicitly: pieces.Piece = self.grid[final_position.rank][final_position.file]
-            self.grid[initial_position.rank][initial_position.file] = piece_moved_implicitly
+
             self.grid[final_position.rank][final_position.file] = piece_moved_explicitly
+            piece_moved_explicitly.position = helper.PositionTuple((final_position.rank, final_position.file))
+
+            self.grid[initial_position.rank][initial_position.file] = piece_moved_implicitly
+            piece_moved_implicitly.position = helper.PositionTuple((initial_position.rank, initial_position.file))
         else:
             raise errors.InvalidMove
