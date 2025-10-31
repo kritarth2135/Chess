@@ -87,19 +87,10 @@ class Board:
             print()
             print("+---" * (SIZE + 1), "+", sep="")
 
-    def move(self, movement_tuple: helper.MovementTuple) -> None:
-        initial_position: helper.PositionTuple = movement_tuple.initial
-        final_position: helper.PositionTuple = movement_tuple.final
-
-        piece_moved_explicitly: pieces.Piece = self.grid[initial_position.rank][initial_position.file]
-        valid_moves: list[helper.PositionTuple] = piece_moved_explicitly.valid_moves()
-        if final_position in valid_moves:
-            piece_moved_implicitly: pieces.Piece = self.grid[final_position.rank][final_position.file]
-
-            self.grid[final_position.rank][final_position.file] = piece_moved_explicitly
-            piece_moved_explicitly.position = helper.PositionTuple((final_position.rank, final_position.file))
-
-            self.grid[initial_position.rank][initial_position.file] = piece_moved_implicitly
-            piece_moved_implicitly.position = helper.PositionTuple((initial_position.rank, initial_position.file))
+    def move(self, move: helper.MovementTuple) -> None:
+        piece_moved: pieces.Piece = self.grid[move.initial_pos.rank][move.initial_pos.file]
+        valid_moves: list[helper.PositionTuple] = piece_moved.valid_moves()
+        if piece_moved.name in ["Q", "R", "B"]:
+            pass
         else:
-            raise errors.InvalidMove
+            pass
