@@ -37,10 +37,10 @@ class Piece:
         self.is_moved: bool = False
         self.position: helper.PositionTuple = helper.PositionTuple(position)
     
-    def valid_moves(self) -> list[helper.PositionTuple]:
-        valid_moves: list[helper.PositionTuple] = []
-        
+    def valid_moves(self) -> list[list[helper.PositionTuple]] | list[helper.PositionTuple]:
         if self.name in ["Q", "R", "B"]:
+            valid_moves: list[list[helper.PositionTuple]] = []
+            temp_list: list[helper.PositionTuple] = []
             valid_dir: str = ""
             if self.name == "Q":
                 valid_dir += helper.ALL
@@ -54,12 +54,14 @@ class Piece:
                 for _ in range(SIZE):
                     relative_postion: helper.PositionTuple = helper.get_relative_position(position, dir)
                     if relative_postion:
-                        valid_moves.append(relative_postion)
+                        temp_list.append(relative_postion)
                         position = relative_postion
+                valid_moves.append(temp_list)
                         
             return valid_moves
         
         elif self.name == "K":
+            valid_moves: list[helper.PositionTuple] = []
             for dir in helper.RELATIVE_POSITIONS[helper.ALL]:
                 relative_postion: helper.PositionTuple = helper.get_relative_position(self.position, dir)
                 if relative_postion:
@@ -68,6 +70,7 @@ class Piece:
             return valid_moves
         
         elif self.name == "N":
+            valid_moves: list[helper.PositionTuple] = []
             # straight moves before knight has to turn
             STRAIGHT_MOVES: int = 2
             for dir in helper.RELATIVE_POSITIONS[helper.STRAIGHT]:
@@ -84,6 +87,7 @@ class Piece:
             return valid_moves
         
         elif self.name == "P":
+            valid_moves: list[helper.PositionTuple] = []
             VALID_NO_OF_MOVES: int = 1 if self.is_moved else 2
             DIR: str = "down" if self.color else "up"
             position: helper.PositionTuple = self.position
