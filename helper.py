@@ -13,8 +13,8 @@ BLACK: int = 1
 class PositionTuple:
     # These are rank and file index, not actual rank and file
     def __init__(self, position: tuple[int, int]):
-        self.rank = position[0]
-        self.file = position[1]
+        self.rank: int = position[0]
+        self.file: int = position[1]
         self.position = position
     
     def __add__(self, other: PositionTuple):
@@ -33,8 +33,8 @@ class PositionTuple:
         
 class MovementTuple:
     def __init__(self, movement: tuple[PositionTuple, PositionTuple]):
-        self.initial = movement[0]
-        self.final = movement[1]
+        self.initial_pos: PositionTuple = movement[0]
+        self.final_pos: PositionTuple = movement[1]
         self.movement = movement
 
     def display(self) -> None:
