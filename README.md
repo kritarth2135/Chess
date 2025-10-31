@@ -15,6 +15,10 @@ First, clone this repository and then run:
 ```
 python main.py
 ```
+If you want to overwrite default starting position, you can import a custom board by passing a fen string as an argument as follows:
+```
+python main.py "starting_fen"
+```
 
 ## User input format
 Input is taken as follows, __without__ any space in between

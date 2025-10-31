@@ -2,11 +2,17 @@ from board import Board
 import helper
 import errors
 import os
+import sys
 
 STARTING_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 def main() -> None:
-    board = Board(STARTING_FEN)
+    if len(sys.argv) > 1:
+        starting_fen = sys.argv[1]
+    else:
+        starting_fen = STARTING_FEN
+    
+    board = Board(starting_fen)
     while True:
         clear_screen()
         board.display()
