@@ -37,7 +37,7 @@ class Board:
             elif ch == "q":
                 self.castling_availability[BLACK_QUEENSIDE] = True
 
-        piece_placement: list[str] = helper.number_to_Es_in_board_state(board_state.split("/"))
+        piece_placement: list[str] = helper.number_of_spaces_to_Es_in_piece_position(board_state.split("/"))
         grid: list[list[pieces.Piece]] = []
         for rank in range(SIZE):
             temp_list: list[pieces.Piece] = []
