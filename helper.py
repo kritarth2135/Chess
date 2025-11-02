@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any
 import re
+import os
 
 import errors
 
@@ -93,9 +94,9 @@ values_to_calculate_relative_direction: dict[str, PositionTuple] = {
 }
 
 # Constants for group of directions
-STRAIGHT_DIR: list[str] = [UP, DOWN, LEFT, RIGHT]
-DIAGONAL_DIR: list[str] = [UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
-ALL_DIR: list[str] = [UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
+STRAIGHT_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT]
+DIAGONAL_DIRECTIONS: list[str] = [UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
+ALL_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
 
 def get_relative_position(position: PositionTuple, dir: str) -> PositionTuple | None:
     """Takes a PositionTuple and returns a PositionTuple according the direction given or returns None in case of failure."""
@@ -159,3 +160,10 @@ def number_of_spaces_to_Es_in_piece_position(piece_position: list[str]) -> list[
                 temp_str += rank[i]
         new_piece_position.append(temp_str)
     return new_piece_position
+
+def clear_screen() -> None:
+    """Clears the screen of the terminal."""
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
