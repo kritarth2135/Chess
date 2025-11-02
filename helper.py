@@ -24,7 +24,7 @@ class PositionTuple:
         position: Tuple of the form (rank, file) where rank and file are the indexes of the grid.
     """
 
-    def __init__(self, position: tuple[int, int]) -> PositionTuple:
+    def __init__(self, position: tuple[int, int]) -> None:
         self.rank: int = position[0]
         self.file: int = position[1]
         self.position = position
@@ -59,7 +59,7 @@ class MovementTuple:
         movement: Tuple of the form (initial_position, final_position) where both are of type PositionTuple.
     """
 
-    def __init__(self, movement: tuple[PositionTuple, PositionTuple]) -> MovementTuple:
+    def __init__(self, movement: tuple[PositionTuple, PositionTuple]) -> None:
         self.initial_position: PositionTuple = movement[0]
         self.final_position: PositionTuple = movement[1]
         self.movement = movement
@@ -67,7 +67,10 @@ class MovementTuple:
     def display(self) -> None:
         """Prints the MovementTuple in a readable format."""
 
-        print(f"((" + self.initial_position.display() + "), (" + self.final_position.display() + "))", sep="")
+        print("[")
+        self.initial_position.display()
+        self.final_position.display()
+        print("]")
 
 """Helper Functions to get position in a particular direction."""
 
