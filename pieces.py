@@ -1,58 +1,82 @@
-import helper
 from typing import Any
 
-SIZE: int = helper.SIZE
+import helper
 
-symbols: list[dict[str, str]] = [
-    {   # White (0)
-        "K": "♔", "Q": "♕",
-        "R": "♖", "B": "♗",
-        "N": "♘", "P": "♙"
-    },
-    {   # Black (1)
-        "K": "♚", "Q": "♛",
-        "R": "♜", "B": "♝",
-        "N": "♞", "P": "♟"
-    },
-    {   # Empty (-1)
-        "E": " "   # Unicode U+2001
+"""Pieces name and other data."""
+
+# Pieces names
+KING: str = "K"
+QUEEN: str = "Q"
+ROOK: str = "R"
+BISHOP: str = "B"
+KNIGHT: str = "N"
+PAWN: str = "P"
+EMPTY: str = "E"
+
+SYMBOL: str = "symbol"
+MATERIAL: str = "material"
+
+pieces: dict[str, Any] = {
+    SYMBOL: [
+        {   # White (0)
+            KING: "♔", QUEEN: "♕",
+            ROOK: "♖", BISHOP: "♗",
+            KNIGHT: "♘", PAWN: "♙"
+        },
+        {   # Black (1)
+            KING: "♚", QUEEN: "♛",
+            ROOK: "♜", BISHOP: "♝",
+            KNIGHT: "♞", PAWN: "♟"
+        },
+        {   # Empty (-1)
+            EMPTY: " "   # Unicode U+2001
+        }
+    ],
+    MATERIAL: {
+        KING: float("inf"), QUEEN: 9, ROOK: 5,
+        BISHOP: 3, KNIGHT: 3, PAWN: 1, EMPTY: 0
     }
-]
-
-pieces: dict[str, dict[str, Any]] = {
-    "E": {"material": 0, "name": "Empty"},
-    "K": {"material": float("inf"), "name": "King"},
-    "Q": {"material": 9, "name": "Queen"},
-    "R": {"material": 5, "name": "Rook"},
-    "B": {"material": 3, "name": "Bishop"},
-    "N": {"material": 3, "name": "Knight"},
-    "P": {"material": 1, "name": "Pawn"},
 }
 
 class Piece:
-    def __init__(self, color: int, position: tuple[int, int]):
+    """
+    Create a Piece object.
+
+    Args:
+        color: An integer constant representing the color of the Piece created.
+        position: A PositionTuple indicating the position at which the piece to create on grid.
+    """
+    def __init__(self, color: int, position: helper.PositionTuple) -> None:
         self.symbol: str
         self.name: str
-        self.color: int = color
         self.is_moved: bool = False
-        self.position: helper.PositionTuple = helper.PositionTuple(position)
+        self.color: int = color
+        self.position: helper.PositionTuple = position
     
-    def valid_moves(self) -> list[list[helper.PositionTuple]] | list[helper.PositionTuple]:
-        if self.name in ["Q", "R", "B"]:
+    def get_valid_moves(self) -> list[list[helper.PositionTuple]] | list[helper.PositionTuple]:
+        """
+        Find all the valid move of the piece according to the rules of Chess.
+        
+        Returns:
+            valid_moves: A list of valid moves grouped by direction in case of Queen, Rook, Bishop and
+                         a combined list of all valid moves in case of all other pieces
+        """
+        if self.name in [QUEEN, ROOK, BISHOP]:
             valid_moves: list[list[helper.PositionTuple]] = []
             temp_list: list[helper.PositionTuple] = []
-            valid_dir: str = ""
-            if self.name == "Q":
-                valid_dir += helper.ALL
-            elif self.name == "R":
-                valid_dir += helper.STRAIGHT
-            else:
-                valid_dir += helper.DIAGONAL
+            valid_directions: list[str] = []
             
-            for dir in helper.RELATIVE_POSITIONS[valid_dir]:
+            if self.name == QUEEN:
+                valid_directions += helper.ALL_DIRECTIONS
+            elif self.name == ROOK:
+                valid_directions += helper.STRAIGHT_DIRECTIONS
+            else:
+                valid_directions += helper.DIAGONAL_DIRECTIONS
+            
+            for direction in valid_directions:
                 position: helper.PositionTuple = self.position
-                for _ in range(SIZE):
-                    relative_postion: helper.PositionTuple = helper.get_relative_position(position, dir)
+                for _ in range(helper.SIZE):
+                    relative_postion: helper.PositionTuple = helper.get_relative_position(position, direction)
                     if relative_postion:
                         temp_list.append(relative_postion)
                         position = relative_postion
@@ -60,97 +84,104 @@ class Piece:
                         
             return valid_moves
         
-        elif self.name == "K":
+        else:
             valid_moves: list[helper.PositionTuple] = []
-            for dir in helper.RELATIVE_POSITIONS[helper.ALL]:
-                relative_postion: helper.PositionTuple = helper.get_relative_position(self.position, dir)
-                if relative_postion:
-                    valid_moves.append(relative_postion)
 
-            return valid_moves
-        
-        elif self.name == "N":
-            valid_moves: list[helper.PositionTuple] = []
-            # straight moves before knight has to turn
-            STRAIGHT_MOVES: int = 2
-            for dir in helper.RELATIVE_POSITIONS[helper.STRAIGHT]:
+            if self.name == KING:
+                for direction in helper.ALL_DIRECTIONS:
+                    relative_postion: helper.PositionTuple = helper.get_relative_position(self.position, direction)
+                    if relative_postion:
+                        valid_moves.append(relative_postion)
+
+                return valid_moves
+            
+            elif self.name == KNIGHT:
+                # straight moves before knight has to turn
+                STRAIGHT_MOVES: int = 2
+                
+                for dir in helper.STRAIGHT_DIRECTIONS:
+                    position: helper.PositionTuple = self.position
+                    for _ in range(STRAIGHT_MOVES):
+                        relative_position: helper.PositionTuple = helper.get_relative_position(position, dir)
+                        position = relative_position
+                    for inner_dir in helper.STRAIGHT_DIRECTIONS:
+                        relative_position = helper.get_relative_position(position, inner_dir)
+                        if relative_position:
+                            if not relative_position.on_same_rank_or_file(self.position):
+                                valid_moves.append(relative_position)
+                
+                return valid_moves
+            
+            elif self.name == PAWN:
+                valid_no_of_moves: int = 1 if self.is_moved else 2
+                direction: str = helper.DOWN if self.color == helper.BLACK else helper.UP
                 position: helper.PositionTuple = self.position
-                for _ in range(STRAIGHT_MOVES):
-                    relative_position: helper.PositionTuple = helper.get_relative_position(position, dir)
-                    position = relative_position
-                for inner_dir in helper.RELATIVE_POSITIONS[helper.STRAIGHT]:
-                    relative_position = helper.get_relative_position(position, inner_dir)
+                
+                for _ in range(valid_no_of_moves):
+                    relative_position: helper.PositionTuple = helper.get_relative_position(position, direction)
                     if relative_position:
-                        if not relative_position.on_same_rank_or_file(self.position):
-                            valid_moves.append(relative_position)
+                        valid_moves.append(relative_position)
+                        position = relative_position
+            
+                return valid_moves
             
             return valid_moves
-        
-        elif self.name == "P":
-            valid_moves: list[helper.PositionTuple] = []
-            VALID_NO_OF_MOVES: int = 1 if self.is_moved else 2
-            DIR: str = "down" if self.color else "up"
-            position: helper.PositionTuple = self.position
-            for _ in range(VALID_NO_OF_MOVES):
-                relative_position: helper.PositionTuple = helper.get_relative_position(position, DIR)
-                if relative_position:
-                    valid_moves.append(relative_position)
-                    position = relative_position
-        
-        return valid_moves
+
+"""Subclasses for each piece type."""
 
 class Empty(Piece):
-    name: str = "E"
-    material: int = pieces[name]["material"]
+    name: str = EMPTY
+    material: int = pieces[MATERIAL][name]
+    color: int = helper.EMPTY
     
     def __init__(self, color, position):
-        super().__init__(color, position)
-        self.symbol = symbols[color][Empty.name]
+        super().__init__(Empty.color, position)
+        self.symbol = pieces[SYMBOL][color][Empty.name]
 
 class King(Piece):
-    name: str = "K"
-    material: int = pieces[name]["material"]
+    name: str = KING
+    material: int = pieces[MATERIAL][name]
 
     def __init__(self, color, position):
         super().__init__(color, position)
-        self.symbol = symbols[color][King.name]
+        self.symbol = pieces[SYMBOL][color][King.name]
 
 class Queen(Piece):
-    name: str = "Q"
-    material: int = pieces[name]["material"]
+    name: str = QUEEN
+    material: int = pieces[MATERIAL][name]
 
     def __init__(self, color, position):
         super().__init__(color, position)
-        self.symbol = symbols[color][Queen.name]
+        self.symbol = pieces[SYMBOL][color][Queen.name]
 
 class Rook(Piece):
-    name: str = "R"
-    material: int = pieces[name]["material"]
+    name: str = ROOK
+    material: int = pieces[MATERIAL][name]
 
     def __init__(self, color, position):
         super().__init__(color, position)
-        self.symbol = symbols[color][Rook.name]
+        self.symbol = pieces[SYMBOL][color][Rook.name]
 
 class Bishop(Piece):
-    name: str = "B"
-    material: int = pieces[name]["material"]
+    name: str = BISHOP
+    material: int = pieces[MATERIAL][name]
 
     def __init__(self, color, position):
         super().__init__(color, position)
-        self.symbol = symbols[color][Bishop.name]
+        self.symbol = pieces[SYMBOL][color][Bishop.name]
 
 class Knight(Piece):
-    name: str = "N"
-    material: int = pieces[name]["material"]
+    name: str = KNIGHT
+    material: int = pieces[MATERIAL][name]
 
     def __init__(self, color, position):
         super().__init__(color, position)
-        self.symbol = symbols[color][Knight.name]
+        self.symbol = pieces[SYMBOL][color][Knight.name]
 
 class Pawn(Piece):
-    name: str = "P"
-    material: int = pieces[name]["material"]
+    name: str = PAWN
+    material: int = pieces[MATERIAL][name]
 
     def __init__(self, color, position):
         super().__init__(color, position)
-        self.symbol = symbols[color][Pawn.name]
+        self.symbol = pieces[SYMBOL][color][Pawn.name]
