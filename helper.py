@@ -4,7 +4,7 @@ import re
 
 import errors
 
-"""Constants used"""
+"""Constants used."""
 
 # Length of the square chess grid 
 SIZE: int = 8
@@ -14,7 +14,7 @@ EMPTY: int = -1
 WHITE: int = 0
 BLACK: int = 1
 
-"""Helper Classess"""
+"""Helper Classess."""
 
 class PositionTuple:
     """
