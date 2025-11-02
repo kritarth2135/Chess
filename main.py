@@ -1,7 +1,6 @@
 from board import Board
 import helper
 import errors
-import os
 import sys
 
 STARTING_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -14,7 +13,7 @@ def main() -> None:
     
     board = Board(starting_fen)
     while True:
-        clear_screen()
+        helper.clear_screen()
         board.display()
         
         while True:
@@ -27,12 +26,6 @@ def main() -> None:
                 print("This move is illegal.")
             else:
                 break
-
-def clear_screen() -> None:
-    if os.name == "nt":
-        os.system("cls")
-    else:
-        os.system("clear")
 
 if __name__ == "__main__":
     main()

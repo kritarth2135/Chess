@@ -4,11 +4,11 @@ This is a chess game made in python.
 ## Features
 What you __can__ do now:
 1. Import any game using a FEN string
-2. Move any piece (Although right now it ignores pieces in middle)
 
 What you __cannot__ do now:
 1. Capture a piece
 2. Play chance by chance
+3. Move any piece (Although right now it ignores pieces in middle)
 
 ## How to play:
 First, clone this repository and then run:

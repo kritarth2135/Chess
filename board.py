@@ -43,7 +43,7 @@ class Board:
             temp_list: list[pieces.Piece] = []
             for file in range(SIZE):
                 piece = piece_placement[rank][file]
-                position = (rank, file)
+                position = helper.PositionTuple((rank, file))
                 
                 if piece in ["K", "k"]:
                     temp_piece = pieces.King(WHITE if piece.isupper() else BLACK, position)
@@ -88,9 +88,4 @@ class Board:
             print("+---" * (SIZE + 1), "+", sep="")
 
     def move(self, move: helper.MovementTuple) -> None:
-        piece_moved: pieces.Piece = self.grid[move.initial_pos.rank][move.initial_pos.file]
-        valid_moves: list[helper.PositionTuple] = piece_moved.valid_moves()
-        if piece_moved.name in ["Q", "R", "B"]:
-            pass
-        else:
-            pass
+        pass
