@@ -4,6 +4,7 @@ import re
 import os
 
 import errors
+from pieces import pieces, NOTATION, KING, QUEEN
 
 """Constants used."""
 
@@ -147,23 +148,55 @@ def input_str_to_movement_tuple(input_str: str) -> MovementTuple:
     
     return MovementTuple(tuple(movement_list))
 
-def number_of_spaces_to_Es_in_piece_position(piece_position: list[str]) -> list[str]:
-    """Converts the part of FEN string which indicates the position of all pieces and replaces the number of spaces with 'E's"""
-    
-    new_piece_position: list[str] = []
-    for rank in piece_position:
-        temp_str: str = ""
-        for i in range(len(rank)):
-            if rank[i].isdigit():
-                temp_str += "E" * int(rank[i])
-            else:
-                temp_str += rank[i]
-        new_piece_position.append(temp_str)
-    return new_piece_position
-
 def clear_screen() -> None:
     """Clears the screen of the terminal."""
     if os.name == "nt":
         os.system("cls")
     else:
         os.system("clear")
+
+"""All functions related to FEN parsing."""
+
+def fen_parser(fen_string: str) -> dict[str, Any]:
+    """Takes a FEN string and scrapes all information from it."""
+
+    
+def FEN_to_modified_FEN(fen_string: str) -> list[str]:
+    """Converts the FEN string into a more usable format by making it fixed length."""
+    piece_placement_data, active_color, castling_availability, en_passant_squares, halfmove_count, fullmove_count = fen_string.strip().split(" ")
+
+    modified_piece_placement_data: list[str] = modified_piece_placement(piece_placement_data.split("/"))
+
+    modified_castling: str = modified_castling_availability(castling_availability.split(""))
+
+
+def modified_piece_placement(piece_placement: list[str]) -> list[str]:
+    """Converts the part of FEN string which indicates the position of all pieces and replaces the number of spaces with 'E's"""
+    
+    new_piece_placement: list[str] = []
+    for rank in piece_placement:
+        temp_str: str = ""
+        for i in range(len(rank)):
+            if rank[i].isdigit():
+                temp_str += "E" * int(rank[i])
+            else:
+                temp_str += rank[i]
+        new_piece_placement.append(temp_str)
+    return new_piece_placement
+
+def modified_castling_availability(castling_availability: list[str]):
+    valid_castling_sides: list[str] = [
+        pieces[NOTATION][WHITE][KING],
+        pieces[NOTATION][WHITE][QUEEN],
+        pieces[NOTATION][BLACK][KING],
+        pieces[NOTATION][BLACK][QUEEN],
+    ]
+
+    modified_castling_availability: str = ""
+    for side in valid_castling_sides:
+        if side in castling_availability:
+            modified_castling_availability += "1"
+        else:
+            modified_castling_availability += "0"
+    
+    return modified_castling_availability

@@ -5,31 +5,39 @@ import helper
 """Pieces name and other data."""
 
 # Pieces names
-KING: str = "K"
-QUEEN: str = "Q"
-ROOK: str = "R"
-BISHOP: str = "B"
-KNIGHT: str = "N"
-PAWN: str = "P"
-EMPTY: str = "E"
+KING: str = "King"
+QUEEN: str = "Queen"
+ROOK: str = "Rook"
+BISHOP: str = "Bishop"
+KNIGHT: str = "Knight"
+PAWN: str = "Pawn"
+EMPTY: str = "Empty"
 
+NOTATION: str = "notation"
 SYMBOL: str = "symbol"
 MATERIAL: str = "material"
 
 pieces: dict[str, Any] = {
     SYMBOL: [
         {   # White (0)
-            KING: "♔", QUEEN: "♕",
-            ROOK: "♖", BISHOP: "♗",
-            KNIGHT: "♘", PAWN: "♙"
+            KING: "♔", QUEEN: "♕", ROOK: "♖", BISHOP: "♗", KNIGHT: "♘", PAWN: "♙"
         },
         {   # Black (1)
-            KING: "♚", QUEEN: "♛",
-            ROOK: "♜", BISHOP: "♝",
-            KNIGHT: "♞", PAWN: "♟"
+            KING: "♚", QUEEN: "♛", ROOK: "♜", BISHOP: "♝", KNIGHT: "♞", PAWN: "♟"
         },
         {   # Empty (-1)
             EMPTY: " "   # Unicode U+2001
+        }
+    ],
+    NOTATION: [
+        {   # White (0)
+            KING: "K", QUEEN: "Q", ROOK: "R", BISHOP: "B", KNIGHT: "N", PAWN: "P"
+        },
+        {   # Black (1)
+            KING: "k", QUEEN: "q", ROOK: "r", BISHOP: "b", KNIGHT: "n", PAWN: "p"
+        },
+        {   # Empty (-1)
+            EMPTY: "E"
         }
     ],
     MATERIAL: {
