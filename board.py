@@ -43,7 +43,6 @@ class Board:
             if int(castling_availability) == 1:
                 self.castling_availability[castling] = True
         
-
     def display(self) -> None:
         print("+---" * (helper.SIZE + 1), "+", sep="")
         print("|   | A | B | C | D | E | F | G | H |")
@@ -54,9 +53,46 @@ class Board:
                 print(self.grid.grid[rank][file].symbol, end = " | ")
             print()
             print("+---" * (helper.SIZE + 1), "+", sep="")
+        print()
 
-    def move(self, move: helper.MovementTuple) -> None:
-        pass
+    def move(self, movement: helper.MovementTuple) -> None:
+        piece_moved: pieces.Piece = self.grid[movement.initial_position]
+        if piece_moved.color != self.active_color:
+            raise errors.InvalidTurn
+
+        valid_moves: list[list[helper.PositionTuple]] = piece_moved.get_valid_moves()
+        
+        if piece_moved.name == pieces.PAWN:
+            # Pawn is handled specially
+            moving_squares: list[helper.PositionTuple] = valid_moves[0]
+            capturing_squares: list[helper.PositionTuple] = valid_moves [1]
+
+            if self.grid[movement.final_position].name == pieces.EMPTY:
+                if movement.final_position not in moving_squares:
+                    raise errors.InvalidMove
+            else:
+                if movement.final_position not in capturing_squares:
+                    raise errors.InvalidMove
+        
+        else:
+            if not any(movement.final_position in moves for moves in valid_moves):
+                raise errors.InvalidMove
+                
+            for moves in valid_moves:
+                for i in range(len(moves)):
+                    if moves[i] == movement.final_position:
+                        for j in range(i):
+                            if self.grid[moves[j]].name != pieces.EMPTY:
+                                raise errors.InvalidMove
+        
+        self.grid[movement.final_position] = piece_moved
+        (
+            self.grid[movement.final_position].position,
+            self.grid[movement.final_position].is_moved,
+            self.active_color
+        ) = movement.final_position, True, (self.active_color + 1) % 2
+        self.grid[movement.initial_position] = pieces.create_piece(pieces.EMPTY, movement.initial_position)
+
 
 class Grid:
     """
