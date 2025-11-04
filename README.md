@@ -6,9 +6,8 @@ What you __can__ do now:
 1. Import any game using a FEN string
 
 What you __cannot__ do now:
-1. Capture a piece
-2. Play chance by chance
-3. Move any piece (Although right now it ignores pieces in middle)
+1. Move any piece
+2. Capture a piece
 
 ## How to play:
 First, clone this repository and then run:
