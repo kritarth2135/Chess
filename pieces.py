@@ -229,3 +229,26 @@ class Pawn(Piece):
     def __init__(self, color: int, position: helper.PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][Pawn.name]
+
+
+def create_piece(notation: str, position: helper.PositionTuple) -> Piece:
+    if notation in [pieces[NOTATION][helper.WHITE][KING], pieces[NOTATION][helper.BLACK][KING]]:
+        return King(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    
+    elif notation in [pieces[NOTATION][helper.WHITE][QUEEN], pieces[NOTATION][helper.BLACK][QUEEN]]:
+        return Queen(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    
+    elif notation in [pieces[NOTATION][helper.WHITE][ROOK], pieces[NOTATION][helper.BLACK][ROOK]]:
+        return Rook(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    
+    elif notation in [pieces[NOTATION][helper.WHITE][BISHOP], pieces[NOTATION][helper.BLACK][BISHOP]]:
+        return Bishop(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    
+    elif notation in [pieces[NOTATION][helper.WHITE][KNIGHT], pieces[NOTATION][helper.BLACK][KNIGHT]]:
+        return Knight(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    
+    elif notation in [pieces[NOTATION][helper.WHITE][PAWN], pieces[NOTATION][helper.BLACK][PAWN]]:
+        return Pawn(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    
+    else:
+        return Empty(helper.EMPTY, position)

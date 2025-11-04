@@ -3,15 +3,20 @@ import helper
 import errors
 import sys
 
-STARTING_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+NEW_GAME_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 def main() -> None:
-    if len(sys.argv) > 1:
+    if len(sys.argv) == 2:
         starting_fen = sys.argv[1]
     else:
-        starting_fen = STARTING_FEN
+        starting_fen = NEW_GAME_FEN
     
-    board = Board(starting_fen)
+    try:
+        board = Board(starting_fen)
+    except errors.InvalidFEN:
+        print("Invalid FEN string passed.")
+        exit(1)
+
     while True:
         helper.clear_screen()
         board.display()

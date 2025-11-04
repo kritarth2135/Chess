@@ -4,7 +4,6 @@ import re
 import os
 
 import errors
-from pieces import pieces, NOTATION, KING, QUEEN
 
 
 # Constants used.
@@ -110,6 +109,7 @@ STRAIGHT_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT]
 DIAGONAL_DIRECTIONS: list[str] = [UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
 ALL_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
 
+
 def get_relative_position(position: PositionTuple, dir: str) -> PositionTuple | None:
     """Takes a PositionTuple and returns a PositionTuple according the direction given or returns None in case of failure."""
 
@@ -179,11 +179,18 @@ def fen_parser(fen_string: str) -> dict[str, Any] | None:
         return None
     
     FEN_data: dict[str, Any] = {}
-    piece_placement_data, active_color, castling_availability, en_passant_squares, halfmove_count, fullmove_count = modified_FEN.split(" ")
+    (
+        piece_placement_data,
+        active_color,
+        castling_availability,
+        en_passant_squares,
+        halfmove_count,
+        fullmove_count
+    ) = modified_FEN.split(" ")
     
     FEN_data["piece_placement_data"] = piece_placement_data.split("/")
     FEN_data["active_color"] = WHITE if active_color == "w" else BLACK
-    FEN_data["castling_availability"] = castling_availability
+    FEN_data["castling_availability"] = list(castling_availability)
     FEN_data["en_passant_squares"] = en_passant_squares
     FEN_data["halfmove_count"] = int(halfmove_count)
     FEN_data["fullmove_count"] = int(fullmove_count)
@@ -226,6 +233,8 @@ def modified_piece_placement(piece_placement: list[str]) -> list[str]:
 
 def modified_castling_availability(castling_availability: list[str]):
     """Converts castling availability into a series of 0s and 1s in the sequence shown in valid_castling_sides"""
+
+    from pieces import pieces, NOTATION, KING, QUEEN
 
     valid_castling_sides: list[str] = [
         pieces[NOTATION][WHITE][KING],
