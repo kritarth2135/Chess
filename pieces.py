@@ -92,18 +92,18 @@ class Piece:
         self.color: int = color
         self.position: helper.PositionTuple = position
     
-    def get_valid_moves(self) -> list[list[helper.PositionTuple]] | list[helper.PositionTuple]:
+    def get_valid_moves(self) -> list[list[helper.PositionTuple]]:
         """
         Find all the valid move of the piece according to the rules of Chess.
         
         Returns:
             valid_moves: A list of valid moves grouped by direction in case of Queen, Rook, Bishop and
-                         a combined list of all valid moves in case of all other pieces
+                         a list of single valid moves in case of King and Knight and
+                         a list of valid moves and capture moves in case of pawn
         """
 
         if self.name in [QUEEN, ROOK, BISHOP]:
             valid_moves_per_direction: list[list[helper.PositionTuple]] = []
-            temp_list: list[helper.PositionTuple] = []
             valid_directions: list[str] = []
             
             if self.name == QUEEN:
@@ -114,6 +114,7 @@ class Piece:
                 valid_directions += helper.DIAGONAL_DIRECTIONS
             
             for direction in valid_directions:
+                temp_list: list[helper.PositionTuple] = []
                 position: helper.PositionTuple | None = self.position
                 for _ in range(helper.SIZE):
                     relative_postion: helper.PositionTuple | None = helper.get_relative_position(position, direction)
@@ -121,17 +122,19 @@ class Piece:
                         temp_list.append(relative_postion)
                         position = relative_postion
                 valid_moves_per_direction.append(temp_list)
-                        
+            
             return valid_moves_per_direction
         
         else:
-            valid_moves: list[helper.PositionTuple] = []
+            valid_moves: list[list[helper.PositionTuple]] = []
 
             if self.name == KING:
                 for direction in helper.ALL_DIRECTIONS:
                     relative_postion = helper.get_relative_position(self.position, direction)
                     if relative_postion:
-                        valid_moves.append(relative_postion)
+                        temp_list: list[helper.PositionTuple] = []
+                        temp_list.append(relative_postion)
+                        valid_moves.append(temp_list)
 
                 return valid_moves
             
@@ -152,7 +155,9 @@ class Piece:
                         relative_position = helper.get_relative_position(position, inner_dir)
                         if relative_position:
                             if not relative_position.on_same_rank_or_file(self.position):
-                                valid_moves.append(relative_position)
+                                temp_list: list[helper.PositionTuple] = []
+                                temp_list.append(relative_position)
+                                valid_moves.append(temp_list)
                 
                 return valid_moves
             
@@ -160,18 +165,28 @@ class Piece:
                 valid_no_of_moves: int = 1 if self.is_moved else 2
                 direction: str = helper.DOWN if self.color == helper.BLACK else helper.UP
                 position = self.position
+                moving_squares: list[helper.PositionTuple] = []
+                capturing_squares: list[helper.PositionTuple] = []
                 
-                for _ in range(valid_no_of_moves):
+                for i in range(valid_no_of_moves):
                     relative_position = helper.get_relative_position(position, direction)
                     if relative_position:
-                        valid_moves.append(relative_position)
+                        moving_squares.append(relative_position)
                         position = relative_position
+                    if i == 0:
+                        for dir in [helper.LEFT, helper.RIGHT]:
+                            capturing_square: helper.PositionTuple | None = helper.get_relative_position(position, dir)
+                            if capturing_square:
+                                capturing_squares.append(capturing_square)
             
+                valid_moves.append(moving_squares)
+                valid_moves.append(capturing_squares)
                 return valid_moves
             
             return valid_moves
 
-"""Subclasses for each piece type."""
+
+# Subclasses for each piece type.
 
 class Empty(Piece):
     name: str = EMPTY
@@ -232,6 +247,8 @@ class Pawn(Piece):
 
 
 def create_piece(notation: str, position: helper.PositionTuple) -> Piece:
+    """Takes the notation and position as argument and creates a Piece according to it."""
+
     if notation in [pieces[NOTATION][helper.WHITE][KING], pieces[NOTATION][helper.BLACK][KING]]:
         return King(helper.WHITE if notation.isupper() else helper.BLACK, position)
     
