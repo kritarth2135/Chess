@@ -4,10 +4,14 @@ This is a chess game made in python.
 ## Features
 What you __can__ do now:
 1. Import any game using a FEN string
+2. Move any piece
+3. Capture any piece
 
 What you __cannot__ do now:
-1. Move any piece
-2. Capture a piece
+1. Check the king
+2. Checkmate the king
+3. Castle
+4. En passant capture
 
 ## How to play:
 First, clone this repository and then run:
