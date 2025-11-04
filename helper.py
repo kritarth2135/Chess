@@ -50,7 +50,7 @@ class PositionTuple:
     def __str__(self) -> str:
         """Returns the PositionTuple in a readable format"""
         
-        return f"({self.rank}, {self.file})"
+        return f"({chr(ord("A") + self.file)}{SIZE - self.rank})"
     
     def on_same_rank_or_file(self, other: PositionTuple | Any) -> bool:
         """Returns true if both PositionTuples refer to the location on same rank OR same file."""
@@ -128,7 +128,7 @@ def is_out_of_bounds(position: PositionTuple) -> bool:
     return False
 
 
-# Helper functions to validate and convert user input to PositionTuple.
+# Helper functions to validate and convert user input to MovementTuple.
 
 def alg_notation_to_position_tuple(alg_notation: str) -> PositionTuple:
     """Takes algorithmic notation in str and returns a PositionTuple according to it."""
