@@ -1,19 +1,15 @@
 class InvalidFEN(Exception):
-    def __init__(self, message: str = "Invalid FEN string."):
-        self.message = message
-        super().__init__(self.message)
+    def __init__(self):
+        super().__init__("Invalid FEN string.")
 
 class InvalidInput(Exception):
-    def __init__(self, message: str = "Invalid input format."):
-        self.message = message
-        super().__init__(self.message)
+    def __init__(self):
+        super().__init__("Invalid input format.")
 
 class InvalidMove(Exception):
-    def __init__(self, message: str = "Invalid move."):
-        self.message = message
-        super().__init__(self.message)
+    def __init__(self):
+        super().__init__("Illegal move.")
 
 class InvalidTurn(Exception):
-    def __init__(self, message: str = "Invalid turn."):
-        self.message = message
-        super().__init__(self.message)
+    def __init__(self):
+        super().__init__("Invalid turn.")
