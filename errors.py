@@ -10,6 +10,10 @@ class InvalidMove(Exception):
     def __init__(self):
         super().__init__("Illegal move.")
 
+class KingStillUnderCheck(Exception):
+    def __init__(self):
+        super().__init__("Your King is still under Check!")
+
 class InvalidTurn(Exception):
     def __init__(self):
         super().__init__("Invalid turn.")

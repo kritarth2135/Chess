@@ -204,6 +204,8 @@ class King(Piece):
     def __init__(self, color: int, position: helper.PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][King.name]
+        self.is_under_check: bool = False
+        self.check_given_by: helper.PositionTuple
 
 class Queen(Piece):
     name: str = QUEEN
