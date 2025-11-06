@@ -42,8 +42,11 @@ class Board:
         for castling, castling_availability in zip(list(self.castling_availability.keys()), FEN_data["castling_availability"]):
             if int(castling_availability) == 1:
                 self.castling_availability[castling] = True
+    
         
     def display(self) -> None:
+        """Prints the Chess Board in a Visually Good manner."""
+
         print("+---" * (helper.SIZE + 1), "+", sep="")
         print("|   | A | B | C | D | E | F | G | H |")
         print("+---" * (helper.SIZE + 1), "+", sep="")
@@ -55,36 +58,54 @@ class Board:
             print("+---" * (helper.SIZE + 1), "+", sep="")
         print()
 
+    
+    def valid_moves_from_possible_moves(self, piece: pieces.Piece) -> list[helper.PositionTuple]:
+        """Returns valid moves from possible moves according to current position of the board."""
+        
+        possible_moves: list[list[helper.PositionTuple]] = piece.get_possible_moves()
+        valid_moves: list[helper.PositionTuple] = []
+        
+        if piece.name == pieces.PAWN:
+            # Pawn is handled specially
+            possible_moving_squares: list[helper.PositionTuple] = possible_moves[0]
+            possible_capturing_squares: list[helper.PositionTuple] = possible_moves [1]
+
+            for move in possible_moving_squares:
+                if self.grid[move].name != pieces.EMPTY:
+                    break
+                valid_moves.append(move)
+            
+            for move in possible_capturing_squares:
+                if self.grid[move].name != pieces.EMPTY and self.grid[move].color != piece.color:
+                    valid_moves.append(move)
+            
+            return valid_moves
+        
+        else:
+            for moves in possible_moves:
+                for move in moves:
+                    if self.grid[move].name != pieces.EMPTY:
+                        if self.grid[move].color != piece.color:
+                            valid_moves.append(move)
+                        break
+                    valid_moves.append(move)
+            
+            return valid_moves
+
+    
+    
     def move(self, movement: helper.MovementTuple) -> None:
+        """Moves the piece on movement.initial_position to movement.final_position if it is valid."""
+
         piece_moved: pieces.Piece = self.grid[movement.initial_position]
         if piece_moved.color != self.active_color:
             raise errors.InvalidTurn
 
-        valid_moves: list[list[helper.PositionTuple]] = piece_moved.get_valid_moves()
+        valid_moves: list[helper.PositionTuple] = self.valid_moves_from_possible_moves(piece_moved)
         
-        if piece_moved.name == pieces.PAWN:
-            # Pawn is handled specially
-            moving_squares: list[helper.PositionTuple] = valid_moves[0]
-            capturing_squares: list[helper.PositionTuple] = valid_moves [1]
+        if movement.final_position not in valid_moves:
+            raise errors.InvalidMove
 
-            if self.grid[movement.final_position].name == pieces.EMPTY:
-                if movement.final_position not in moving_squares:
-                    raise errors.InvalidMove
-            else:
-                if movement.final_position not in capturing_squares:
-                    raise errors.InvalidMove
-        
-        else:
-            if not any(movement.final_position in moves for moves in valid_moves):
-                raise errors.InvalidMove
-                
-            for moves in valid_moves:
-                for i in range(len(moves)):
-                    if moves[i] == movement.final_position:
-                        for j in range(i):
-                            if self.grid[moves[j]].name != pieces.EMPTY:
-                                raise errors.InvalidMove
-        
         self.grid[movement.final_position] = piece_moved
         (
             self.grid[movement.final_position].position,
