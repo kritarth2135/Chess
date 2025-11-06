@@ -119,7 +119,8 @@ class Board:
 
         for position_of_king in self.grid.positoin_of_kings:
             if position_of_king in attacked_squares and self.grid[position_of_king].color != piece_moved.color:
-                ... # Check detected succesfully :)
+                # Check detected succesfully :)
+                ...
 
 
 class Grid:
