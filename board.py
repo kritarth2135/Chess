@@ -97,22 +97,29 @@ class Board:
     def move(self, movement: helper.MovementTuple) -> None:
         """Moves the piece on movement.initial_position to movement.final_position if it is valid."""
 
-        piece_moved: pieces.Piece = self.grid[movement.initial_position]
-        if piece_moved.color != self.active_color:
+        piece_to_move: pieces.Piece = self.grid[movement.initial_position]
+        if piece_to_move.color != self.active_color:
             raise errors.InvalidTurn
 
-        valid_moves: list[helper.PositionTuple] = self.valid_moves_from_possible_moves(piece_moved)
+        valid_moves: list[helper.PositionTuple] = self.valid_moves_from_possible_moves(piece_to_move)
         
         if movement.final_position not in valid_moves:
             raise errors.InvalidMove
 
-        self.grid[movement.final_position] = piece_moved
+        self.grid[movement.final_position] = piece_to_move
         (
             self.grid[movement.final_position].position,
             self.grid[movement.final_position].is_moved,
             self.active_color
         ) = movement.final_position, True, (self.active_color + 1) % 2
         self.grid[movement.initial_position] = pieces.create_piece(pieces.EMPTY, movement.initial_position)
+
+        piece_moved = self.grid[movement.final_position]
+        attacked_squares: list[helper.PositionTuple] = self.valid_moves_from_possible_moves(piece_moved)
+
+        for position_of_king in self.grid.positoin_of_kings:
+            if position_of_king in attacked_squares and self.grid[position_of_king].color != piece_moved.color:
+                ... # Check detected succesfully :)
 
 
 class Grid:
@@ -128,6 +135,7 @@ class Grid:
 
     def __init__(self, piece_placement: list[list[str]]) -> None:
         self.grid: list[list[pieces.Piece]] = []
+        self.positoin_of_kings: list[helper.PositionTuple] = []
 
         for rank in range(helper.SIZE):
             temp_list: list[pieces.Piece] = []
@@ -137,6 +145,8 @@ class Grid:
                 position = helper.PositionTuple((rank, file))
                 
                 temp_piece: pieces.Piece = pieces.create_piece(piece_notation, position)
+                if temp_piece.name == pieces.KING:
+                    self.positoin_of_kings.append(temp_piece.position)
                 temp_list.append(temp_piece)
 
             self.grid.append(temp_list)
