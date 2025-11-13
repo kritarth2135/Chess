@@ -1,6 +1,7 @@
 from typing import Any
 
 import helper
+PositionTuple = helper.PositionTuple
 
 # Pieces names
 KING: str = "King"
@@ -85,14 +86,14 @@ class Piece:
         position: PositionTuple representing the position of the piece on the Board.
     """
 
-    def __init__(self, color: int, position: helper.PositionTuple) -> None:
+    def __init__(self, color: int, position: PositionTuple) -> None:
         self.symbol: str
         self.name: str
         self.is_moved: bool = False
         self.color: int = color
-        self.position: helper.PositionTuple = position
+        self.position: PositionTuple = position
     
-    def get_possible_moves(self) -> list[list[helper.PositionTuple]]:
+    def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
         Find all the possible move of the Queen, the Rook and the Bishop according to the rules of Chess.
         
@@ -101,7 +102,7 @@ class Piece:
         """
 
         
-        possible_moves_per_direction: list[list[helper.PositionTuple]] = []
+        possible_moves_per_direction: list[list[PositionTuple]] = []
         possible_directions: list[str] = []
         
         if self.name == QUEEN:
@@ -112,10 +113,10 @@ class Piece:
             possible_directions += helper.DIAGONAL_DIRECTIONS
         
         for direction in possible_directions:
-            temp_list: list[helper.PositionTuple] = []
-            position: helper.PositionTuple | None = self.position
+            temp_list: list[PositionTuple] = []
+            position: PositionTuple | None = self.position
             for _ in range(helper.SIZE):
-                relative_postion: helper.PositionTuple | None = helper.get_relative_position(position, direction)
+                relative_postion: PositionTuple | None = helper.get_relative_position(position, direction)
                 if relative_postion:
                     temp_list.append(relative_postion)
                     position = relative_postion
@@ -131,7 +132,7 @@ class Empty(Piece):
     material: int = pieces[MATERIAL][name]
     color: int = helper.EMPTY
     
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(Empty.color, position)
         self.symbol = pieces[SYMBOL][color][Empty.name]
 
@@ -139,25 +140,25 @@ class King(Piece):
     name: str = KING
     material: int = pieces[MATERIAL][name]
 
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][King.name]
         self.is_under_check: bool = False
-        self.check_given_by: helper.PositionTuple
+        self.check_given_by: PositionTuple
     
-    def get_possible_moves(self) -> list[list[helper.PositionTuple]]:
+    def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
         Find all the possible move of the King according to the rules of Chess.
         
         Returns:
             possible_moves: A list of single possible moves.
         """
-        possible_moves: list[list[helper.PositionTuple]] = []
+        possible_moves: list[list[PositionTuple]] = []
 
         for direction in helper.ALL_DIRECTIONS:
             relative_postion = helper.get_relative_position(self.position, direction)
             if relative_postion:
-                temp_list: list[helper.PositionTuple] = []
+                temp_list: list[PositionTuple] = []
                 temp_list.append(relative_postion)
                 possible_moves.append(temp_list)
 
@@ -167,7 +168,7 @@ class Queen(Piece):
     name: str = QUEEN
     material: int = pieces[MATERIAL][name]
 
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][Queen.name]
 
@@ -175,7 +176,7 @@ class Rook(Piece):
     name: str = ROOK
     material: int = pieces[MATERIAL][name]
 
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][Rook.name]
 
@@ -183,7 +184,7 @@ class Bishop(Piece):
     name: str = BISHOP
     material: int = pieces[MATERIAL][name]
 
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][Bishop.name]
 
@@ -191,18 +192,18 @@ class Knight(Piece):
     name: str = KNIGHT
     material: int = pieces[MATERIAL][name]
 
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][Knight.name]
     
-    def get_possible_moves(self) -> list[list[helper.PositionTuple]]:
+    def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
         Find all the possible move of the Knight according to the rules of Chess.
         
         Returns:
             possible_moves: A list of single possible moves.
         """
-        possible_moves: list[list[helper.PositionTuple]] = []
+        possible_moves: list[list[PositionTuple]] = []
 
         # straight moves before knight has to turn
         STRAIGHT_MOVES: int = 2
@@ -220,7 +221,7 @@ class Knight(Piece):
                 relative_position = helper.get_relative_position(position, inner_dir)
                 if relative_position:
                     if not relative_position.on_same_rank_or_file(self.position):
-                        temp_list: list[helper.PositionTuple] = []
+                        temp_list: list[PositionTuple] = []
                         temp_list.append(relative_position)
                         possible_moves.append(temp_list)
         
@@ -230,24 +231,24 @@ class Pawn(Piece):
     name: str = PAWN
     material: int = pieces[MATERIAL][name]
 
-    def __init__(self, color: int, position: helper.PositionTuple):
+    def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][Pawn.name]
     
-    def get_possible_moves(self) -> list[list[helper.PositionTuple]]:
+    def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
         Find all the possible move of the Pawn according to the rules of Chess.
         
         Returns:
             possible_moves: A list of possible moves and capture moves.
         """
-        possible_moves: list[list[helper.PositionTuple]] = []
+        possible_moves: list[list[PositionTuple]] = []
 
         possible_no_of_moves: int = 1 if self.is_moved else 2
         direction: str = helper.DOWN if self.color == helper.BLACK else helper.UP
         position = self.position
-        moving_squares: list[helper.PositionTuple] = []
-        capturing_squares: list[helper.PositionTuple] = []
+        moving_squares: list[PositionTuple] = []
+        capturing_squares: list[PositionTuple] = []
         
         for i in range(possible_no_of_moves):
             relative_position = helper.get_relative_position(position, direction)
@@ -256,7 +257,7 @@ class Pawn(Piece):
                 position = relative_position
             if i == 0:
                 for dir in [helper.LEFT, helper.RIGHT]:
-                    capturing_square: helper.PositionTuple | None = helper.get_relative_position(position, dir)
+                    capturing_square: PositionTuple | None = helper.get_relative_position(position, dir)
                     if capturing_square:
                         capturing_squares.append(capturing_square)
     
@@ -265,7 +266,7 @@ class Pawn(Piece):
         return possible_moves
 
 
-def create_piece(notation: str, position: helper.PositionTuple) -> Piece:
+def create_piece(notation: str, position: PositionTuple) -> Piece:
     """Takes the notation and position as argument and creates a Piece according to it."""
 
     if notation in [pieces[NOTATION][helper.WHITE][KING], pieces[NOTATION][helper.BLACK][KING]]:

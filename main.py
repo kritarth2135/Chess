@@ -25,7 +25,7 @@ def main() -> None:
             try:
                 input_str: str = input("Enter the move to play or 'exit' to quit: ")
                 if input_str.lower() == "exit":
-                    exit()
+                    sys.exit()
                 board.move(helper.input_str_to_movement_tuple(input_str))
             except errors.InvalidInput:
                 print("Invalid Input format.")
