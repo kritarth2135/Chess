@@ -27,13 +27,10 @@ def main() -> None:
                 if input_str.lower() == "exit":
                     sys.exit()
                 board.move(helper.input_str_to_movement_tuple(input_str))
-            except errors.InvalidInput:
-                print("Invalid Input format.")
-                print("Format to enter input: \"<starting_square>,<ending_square>\"")
-            except errors.InvalidMove:
-                print("This move is illegal.")
             except errors.InvalidTurn:
-                print(f"It is {"White" if board.active_color == helper.WHITE else "Black"}'s turn.")
+                print(f"\033[31mIt is {"White" if board.active_color == helper.WHITE else "Black"}'s turn.\033[0m")
+            except Exception as e:
+                print(f"\033[31m{e}\033[0m")
             else:
                 break
 

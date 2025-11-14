@@ -1,14 +1,17 @@
 class InvalidFEN(Exception):
     def __init__(self):
-        super().__init__("Invalid FEN string.")
+        super().__init__("Invalid FEN string!")
 
 class InvalidInput(Exception):
     def __init__(self):
-        super().__init__("Invalid input format.")
+        super().__init__(
+            "Invalid Input format.\n"
+            "Format to enter input: \"<starting_square>,<ending_square>\""
+        )
 
 class InvalidMove(Exception):
     def __init__(self):
-        super().__init__("Illegal move.")
+        super().__init__("Illegal move!")
 
 class KingStillUnderCheck(Exception):
     def __init__(self):
@@ -16,4 +19,4 @@ class KingStillUnderCheck(Exception):
 
 class InvalidTurn(Exception):
     def __init__(self):
-        super().__init__("Invalid turn.")
+        super().__init__("Invalid turn!")
