@@ -52,10 +52,15 @@ class PositionTuple:
         
         return f"({chr(ord("A") + self.file)}{SIZE - self.rank})"
     
-    def on_same_rank_or_file(self, other: PositionTuple | Any) -> bool:
-        """Returns true if both PositionTuples refer to the location on same rank OR same file."""
+    def in_straight_direction(self, other: PositionTuple | Any) -> bool:
+        """Returns true if both PositionTuple refer to the location in a straight line on grid"""
 
         return self.rank == other.rank or self.file == other.file
+    
+    def in_diagonal_direction(self, other: PositionTuple | Any) -> bool:
+        """Returns true if both PositionTuple refer to the location in a straight line on grid"""
+
+        return ((self.rank - other.rank) ** 2) == ((self.file - other.file) ** 2)
 
 
 class MovementTuple:

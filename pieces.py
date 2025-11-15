@@ -143,8 +143,8 @@ class King(Piece):
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = pieces[SYMBOL][color][King.name]
-        self.is_under_check: bool = False
-        self.check_given_by: PositionTuple
+        self.is_under_Check: bool = False
+        self.Check_given_by: PositionTuple
     
     def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
@@ -163,6 +163,27 @@ class King(Piece):
                 possible_moves.append(temp_list)
 
         return possible_moves
+    
+    # def get_possible_attacking_positions(self) -> list[list[PositionTuple]]:
+    #     """
+    #     Find all the possible positions from where the King can be attacked.
+
+    #     Returns:
+    #         possible_attacking_positions: A list of positions grouped by direction
+    #     """
+
+    #     possible_attacking_positions: list[list[PositionTuple]] = []
+    #     temp_piece_1: Queen = Queen(helper.EMPTY, self.position)
+    #     temp_piece_2: Knight = Knight(helper.EMPTY, self.position)
+    #     temp_piece_3: Pawn = Pawn(helper.EMPTY, self.position)
+
+    #     possible_attacking_positions += temp_piece_1.get_possible_moves()
+    #     possible_attacking_positions += temp_piece_2.get_possible_moves()
+
+    #     # Because for a pawn attacking squares are in 1st index of the returned list
+    #     possible_attacking_positions += [temp_piece_3.get_possible_moves()[1]]
+
+    #     return possible_attacking_positions
 
 class Queen(Piece):
     name: str = QUEEN
@@ -220,7 +241,7 @@ class Knight(Piece):
                     break
                 relative_position = helper.get_relative_position(position, inner_dir)
                 if relative_position:
-                    if not relative_position.on_same_rank_or_file(self.position):
+                    if not relative_position.in_straight_direction(self.position):
                         temp_list: list[PositionTuple] = []
                         temp_list.append(relative_position)
                         possible_moves.append(temp_list)
