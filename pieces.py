@@ -1,5 +1,6 @@
 from typing import Any
 
+from constants import *
 import helper
 PositionTuple = helper.PositionTuple
 
@@ -106,16 +107,16 @@ class Piece:
         possible_directions: list[str] = []
         
         if self.name == QUEEN:
-            possible_directions += helper.ALL_DIRECTIONS
+            possible_directions += ALL_DIRECTIONS
         elif self.name == ROOK:
-            possible_directions += helper.STRAIGHT_DIRECTIONS
+            possible_directions += STRAIGHT_DIRECTIONS
         else:
-            possible_directions += helper.DIAGONAL_DIRECTIONS
+            possible_directions += DIAGONAL_DIRECTIONS
         
         for direction in possible_directions:
             temp_list: list[PositionTuple] = []
             position: PositionTuple | None = self.position
-            for _ in range(helper.SIZE):
+            for _ in range(SIZE):
                 relative_postion: PositionTuple | None = helper.get_relative_position(position, direction)
                 if relative_postion:
                     temp_list.append(relative_postion)
@@ -130,7 +131,7 @@ class Piece:
 class Empty(Piece):
     name: str = EMPTY
     material: int = pieces[MATERIAL][name]
-    color: int = helper.EMPTY
+    color: int = EMPTY
     
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(Empty.color, position)
@@ -155,7 +156,7 @@ class King(Piece):
         """
         possible_moves: list[list[PositionTuple]] = []
 
-        for direction in helper.ALL_DIRECTIONS:
+        for direction in ALL_DIRECTIONS:
             relative_postion = helper.get_relative_position(self.position, direction)
             if relative_postion:
                 temp_list: list[PositionTuple] = []
@@ -173,9 +174,9 @@ class King(Piece):
     #     """
 
     #     possible_attacking_positions: list[list[PositionTuple]] = []
-    #     temp_piece_1: Queen = Queen(helper.EMPTY, self.position)
-    #     temp_piece_2: Knight = Knight(helper.EMPTY, self.position)
-    #     temp_piece_3: Pawn = Pawn(helper.EMPTY, self.position)
+    #     temp_piece_1: Queen = Queen(EMPTY, self.position)
+    #     temp_piece_2: Knight = Knight(EMPTY, self.position)
+    #     temp_piece_3: Pawn = Pawn(EMPTY, self.position)
 
     #     possible_attacking_positions += temp_piece_1.get_possible_moves()
     #     possible_attacking_positions += temp_piece_2.get_possible_moves()
@@ -229,14 +230,14 @@ class Knight(Piece):
         # straight moves before knight has to turn
         STRAIGHT_MOVES: int = 2
         
-        for dir in helper.STRAIGHT_DIRECTIONS:
+        for dir in STRAIGHT_DIRECTIONS:
             position = self.position
             for _ in range(STRAIGHT_MOVES): 
                 if not position:
                     break
                 relative_position = helper.get_relative_position(position, dir)
                 position = relative_position
-            for inner_dir in helper.STRAIGHT_DIRECTIONS:
+            for inner_dir in STRAIGHT_DIRECTIONS:
                 if not position:
                     break
                 relative_position = helper.get_relative_position(position, inner_dir)
@@ -266,7 +267,7 @@ class Pawn(Piece):
         possible_moves: list[list[PositionTuple]] = []
 
         possible_no_of_moves: int = 1 if self.is_moved else 2
-        direction: str = helper.DOWN if self.color == helper.BLACK else helper.UP
+        direction: str = DOWN if self.color == BLACK else UP
         position = self.position
         moving_squares: list[PositionTuple] = []
         capturing_squares: list[PositionTuple] = []
@@ -277,7 +278,7 @@ class Pawn(Piece):
                 moving_squares.append(relative_position)
                 position = relative_position
             if i == 0:
-                for dir in [helper.LEFT, helper.RIGHT]:
+                for dir in [LEFT, RIGHT]:
                     capturing_square: PositionTuple | None = helper.get_relative_position(position, dir)
                     if capturing_square:
                         capturing_squares.append(capturing_square)
@@ -290,23 +291,23 @@ class Pawn(Piece):
 def create_piece(notation: str, position: PositionTuple) -> Piece:
     """Takes the notation and position as argument and creates a Piece according to it."""
 
-    if notation in [pieces[NOTATION][helper.WHITE][KING], pieces[NOTATION][helper.BLACK][KING]]:
-        return King(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    if notation in [pieces[NOTATION][WHITE][KING], pieces[NOTATION][BLACK][KING]]:
+        return King(WHITE if notation.isupper() else BLACK, position)
     
-    elif notation in [pieces[NOTATION][helper.WHITE][QUEEN], pieces[NOTATION][helper.BLACK][QUEEN]]:
-        return Queen(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    elif notation in [pieces[NOTATION][WHITE][QUEEN], pieces[NOTATION][BLACK][QUEEN]]:
+        return Queen(WHITE if notation.isupper() else BLACK, position)
     
-    elif notation in [pieces[NOTATION][helper.WHITE][ROOK], pieces[NOTATION][helper.BLACK][ROOK]]:
-        return Rook(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    elif notation in [pieces[NOTATION][WHITE][ROOK], pieces[NOTATION][BLACK][ROOK]]:
+        return Rook(WHITE if notation.isupper() else BLACK, position)
     
-    elif notation in [pieces[NOTATION][helper.WHITE][BISHOP], pieces[NOTATION][helper.BLACK][BISHOP]]:
-        return Bishop(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    elif notation in [pieces[NOTATION][WHITE][BISHOP], pieces[NOTATION][BLACK][BISHOP]]:
+        return Bishop(WHITE if notation.isupper() else BLACK, position)
     
-    elif notation in [pieces[NOTATION][helper.WHITE][KNIGHT], pieces[NOTATION][helper.BLACK][KNIGHT]]:
-        return Knight(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    elif notation in [pieces[NOTATION][WHITE][KNIGHT], pieces[NOTATION][BLACK][KNIGHT]]:
+        return Knight(WHITE if notation.isupper() else BLACK, position)
     
-    elif notation in [pieces[NOTATION][helper.WHITE][PAWN], pieces[NOTATION][helper.BLACK][PAWN]]:
-        return Pawn(helper.WHITE if notation.isupper() else helper.BLACK, position)
+    elif notation in [pieces[NOTATION][WHITE][PAWN], pieces[NOTATION][BLACK][PAWN]]:
+        return Pawn(WHITE if notation.isupper() else BLACK, position)
     
     else:
-        return Empty(helper.EMPTY, position)
+        return Empty(EMPTY, position)

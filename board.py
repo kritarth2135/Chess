@@ -1,5 +1,6 @@
 from typing import Any
 
+from constants import *
 import pieces
 import helper
 import errors
@@ -25,7 +26,7 @@ class Board:
     """
 
     def __init__(self, fen_string: str) -> None:
-        FEN_data: dict[str, Any] | None = helper.fen_parser(fen_string)
+        FEN_data: dict[str, Any] | None = fen_parser(fen_string)
         if not FEN_data:
             raise errors.InvalidFEN
         
@@ -37,10 +38,10 @@ class Board:
         self.grid = Grid(FEN_data["piece_placement_data"])
 
         self.castling_availability: dict[str, bool] = {
-            pieces.pieces[pieces.NOTATION][helper.WHITE][pieces.KING]: False,
-            pieces.pieces[pieces.NOTATION][helper.WHITE][pieces.QUEEN]: False,
-            pieces.pieces[pieces.NOTATION][helper.BLACK][pieces.KING]: False,
-            pieces.pieces[pieces.NOTATION][helper.BLACK][pieces.QUEEN]: False
+            pieces[NOTATION][WHITE][KING]: False,
+            pieces[NOTATION][WHITE][QUEEN]: False,
+            pieces[NOTATION][BLACK][KING]: False,
+            pieces[NOTATION][BLACK][QUEEN]: False
         }
 
         for castling, castling_availability in zip(list(self.castling_availability.keys()), FEN_data["castling_availability"]):
@@ -51,15 +52,15 @@ class Board:
     def display(self) -> None:
         """Prints the Chess Board in a Visually Good manner."""
 
-        print("+---" * (helper.SIZE + 1), "+", sep="")
-        for rank in range(helper.SIZE):
-            print(f"| {helper.SIZE - rank} | ", end="")
-            for file in range(helper.SIZE):
+        print("+---" * (SIZE + 1), "+", sep="")
+        for rank in range(SIZE):
+            print(f"| {SIZE - rank} | ", end="")
+            for file in range(SIZE):
                 print(self.grid.grid[rank][file].symbol, end = " | ")
             print()
-            print("+---" * (helper.SIZE + 1), "+", sep="")
+            print("+---" * (SIZE + 1), "+", sep="")
         print("|   | A | B | C | D | E | F | G | H |")
-        print("+---" * (helper.SIZE + 1), "+", sep="")
+        print("+---" * (SIZE + 1), "+", sep="")
 
     
     def valid_moves_from_possible_moves(self, piece: Piece) -> list[PositionTuple]:
@@ -68,18 +69,18 @@ class Board:
         possible_moves: list[list[PositionTuple]] = piece.get_possible_moves()
         valid_moves: list[PositionTuple] = []
         
-        if piece.name == pieces.PAWN:
+        if piece.name == PAWN:
             # Pawn is handled specially
             possible_moving_squares: list[PositionTuple] = possible_moves[0]
             possible_capturing_squares: list[PositionTuple] = possible_moves [1]
 
             for move in possible_moving_squares:
-                if self.grid[move].name != pieces.EMPTY:
+                if self.grid[move].name != EMPTY:
                     break
                 valid_moves.append(move)
             
             for move in possible_capturing_squares:
-                if self.grid[move].name != pieces.EMPTY and self.grid[move].color != piece.color:
+                if self.grid[move].name != EMPTY and self.grid[move].color != piece.color:
                     valid_moves.append(move)
             
             return valid_moves
@@ -87,7 +88,7 @@ class Board:
         else:
             for moves in possible_moves:
                 for move in moves:
-                    if self.grid[move].name != pieces.EMPTY:
+                    if self.grid[move].name != EMPTY:
                         if self.grid[move].color != piece.color:
                             valid_moves.append(move)
                         break
@@ -96,21 +97,10 @@ class Board:
             return valid_moves
 
 
-    def check_for_Check(self, color: int) -> bool:
-        possible_attacking_positions: list[PositionTuple] = []
-        
-        position: PositionTuple = self.grid.king_position[color]
-        for piece in [pieces.QUEEN, pieces.KNIGHT, pieces.PAWN]:
-            temp_piece: Piece = pieces.create_piece(pieces.pieces[pieces.NOTATION][helper.WHITE][piece], position)
-            if temp_piece.name == pieces.PAWN:
-                # Because for a pawn attacking squares are in 1st index of the returned list
-                possible_attacking_positions += [self.valid_moves_from_possible_moves(temp_piece)[1]]
-            else:
-                possible_attacking_positions += self.valid_moves_from_possible_moves(temp_piece)
-        
-        for positions in possible_attacking_positions:
-            if self.grid[positions].name != pieces.EMPTY and self.grid[positions].color != color:
-                return True
+    def is_king_under_check(self, color: int) -> bool:
+        for piece in pieces[NOTATION][WHITE]:
+            temp_piece: Piece = create_piece(piece, self.grid.king_position[color])
+            attacked_by_squares: list[list[PositionTuple]] = temp_piece.get_possible_moves()
 
         return False
     
@@ -120,7 +110,7 @@ class Board:
 
         piece_to_move: Piece = self.grid[movement.initial_position]
         
-        if piece_to_move.color == helper.EMPTY:
+        if piece_to_move.color == EMPTY:
             raise errors.InvalidMove
         if piece_to_move.color != self.active_color:
             raise errors.InvalidTurn
@@ -139,15 +129,12 @@ class Board:
             self.grid[movement.final_position].is_moved,
             self.active_color
         ) = movement.final_position, True, (self.active_color + 1) % 2
-        self.grid[movement.initial_position] = pieces.create_piece(pieces.EMPTY, movement.initial_position)
-
-        if self.check_for_Check((self.active_color + 1) % 2):
-            self.grid[self.grid.king_position[(self.active_color + 1) % 2]].is_under_Check = True # type: ignore
+        self.grid[movement.initial_position] = pieces.create_piece(EMPTY, movement.initial_position)
 
 
 class Grid:
     """
-    Create a helper.SIZE by helper.SIZE grid for the Chess Board.
+    Create a SIZE x SIZE grid for the Chess Board.
 
     Args:
         piece_placement: Modified piece placement data from FEN string, where numbe of spaces are replaced with Es.
@@ -160,15 +147,15 @@ class Grid:
         self.grid: list[list[Piece]] = []
         self.king_position: dict[int, PositionTuple] = {}
 
-        for rank in range(helper.SIZE):
+        for rank in range(SIZE):
             temp_list: list[Piece] = []
 
-            for file in range(helper.SIZE):
+            for file in range(SIZE):
                 piece_notation = piece_placement[rank][file]
                 position = PositionTuple((rank, file))
                 
                 temp_piece: Piece = pieces.create_piece(piece_notation, position)
-                if temp_piece.name == pieces.KING:
+                if temp_piece.name == KING:
                     self.king_position[temp_piece.color] = temp_piece.position
                 temp_list.append(temp_piece)
 
