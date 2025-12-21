@@ -1,10 +1,12 @@
+import sys
+import os
+
 from constants import *
 from board import Board
-import fen
+from inputs import input_str_to_movement_tuple
 import errors
-import sys
 
-DEFAULT_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
 
 def main() -> None:
     if len(sys.argv) == 2:
@@ -19,7 +21,7 @@ def main() -> None:
         exit(1)
 
     while True:
-        helper.clear_screen()
+        clear_screen()
         board.display()
         
         while True:
@@ -30,13 +32,22 @@ def main() -> None:
                 input_str: str = input("Enter the move to play or 'exit' to quit: ")
                 if input_str.lower() == "exit":
                     sys.exit()
-                board.move(helper.input_str_to_movement_tuple(input_str))
+                board.move(input_str_to_movement_tuple(input_str))
             except errors.InvalidTurn:
                 print(f"\033[31mIt is {"White" if board.active_color == WHITE else "Black"}'s turn.\033[0m")
-            except Exception as e:
-                print(f"\033[31m{e}\033[0m")
+            # except Exception as e:
+            #     print(f"\033[31m{e}\033[0m")
             else:
                 break
+
+
+def clear_screen() -> None:
+    """Clears the screen of the terminal."""
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
+
 
 if __name__ == "__main__":
     main()

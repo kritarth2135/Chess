@@ -1,5 +1,9 @@
 from typing import Any
 
+from positions import PositionTuple
+
+
+
 # Length of the square chess grid 
 SIZE: int = 8
 
@@ -42,13 +46,13 @@ ROOK: str = "Rook"
 BISHOP: str = "Bishop"
 KNIGHT: str = "Knight"
 PAWN: str = "Pawn"
-EMPTY: str = "Empty"
+EMPTY_STR: str = "Empty"
 
 NOTATION: str = "notation"
 SYMBOL: str = "symbol"
 MATERIAL: str = "material"
 
-pieces: dict[str, Any] = {
+symbol_notation_and_material: dict[str, Any] = {
     SYMBOL: [
         {   # White (0)
             KING: "♔",
@@ -67,7 +71,7 @@ pieces: dict[str, Any] = {
             PAWN: "♟"
         },
         {   # Empty (-1)
-            EMPTY: " "   # Unicode U+2001
+            EMPTY_STR: " "   # Unicode U+2001
         }
     ],
     NOTATION: [
@@ -88,7 +92,7 @@ pieces: dict[str, Any] = {
             PAWN: "p"
         },
         {   # Empty (-1)
-            EMPTY: "E"
+            EMPTY_STR: "E"
         }
     ],
     MATERIAL: {
@@ -98,7 +102,7 @@ pieces: dict[str, Any] = {
         BISHOP: 3,
         KNIGHT: 3,
         PAWN: 1,
-        EMPTY: 0
+        EMPTY_STR: 0
     }
 }
 

@@ -1,3 +1,9 @@
+from typing import Any
+import re
+
+from constants import *
+
+
 def fen_parser(fen_string: str) -> dict[str, Any] | None:
     """Takes a FEN string and scrapes all information from it and returns a dictionary of all data."""
     modified_FEN: str = FEN_to_modified_FEN(fen_string)
@@ -60,13 +66,11 @@ def modified_piece_placement(piece_placement: list[str]) -> list[str]:
 def modified_castling_availability(castling_availability: list[str]):
     """Converts castling availability into a series of 0s and 1s in the sequence shown in valid_castling_sides"""
 
-    from pieces import pieces, NOTATION, KING, QUEEN
-
     valid_castling_sides: list[str] = [
-        pieces[NOTATION][WHITE][KING],
-        pieces[NOTATION][WHITE][QUEEN],
-        pieces[NOTATION][BLACK][KING],
-        pieces[NOTATION][BLACK][QUEEN],
+        symbol_notation_and_material[NOTATION][WHITE][KING],
+        symbol_notation_and_material[NOTATION][WHITE][QUEEN],
+        symbol_notation_and_material[NOTATION][BLACK][KING],
+        symbol_notation_and_material[NOTATION][BLACK][QUEEN],
     ]
 
     modified_castling_availability: str = ""

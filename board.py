@@ -1,13 +1,10 @@
 from typing import Any
 
 from constants import *
-import pieces
-import helper
+from positions import PositionTuple, MovementTuple
+from pieces import Piece, create_piece
 import errors
-
-PositionTuple = helper.PositionTuple
-MovementTuple = helper.MovementTuple
-Piece = pieces.Piece
+import fen
 
 class Board:
     """
@@ -26,7 +23,7 @@ class Board:
     """
 
     def __init__(self, fen_string: str) -> None:
-        FEN_data: dict[str, Any] | None = fen_parser(fen_string)
+        FEN_data: dict[str, Any] | None = fen.fen_parser(fen_string)
         if not FEN_data:
             raise errors.InvalidFEN
         
@@ -38,10 +35,10 @@ class Board:
         self.grid = Grid(FEN_data["piece_placement_data"])
 
         self.castling_availability: dict[str, bool] = {
-            pieces[NOTATION][WHITE][KING]: False,
-            pieces[NOTATION][WHITE][QUEEN]: False,
-            pieces[NOTATION][BLACK][KING]: False,
-            pieces[NOTATION][BLACK][QUEEN]: False
+            symbol_notation_and_material[NOTATION][WHITE][KING]: False,
+            symbol_notation_and_material[NOTATION][WHITE][QUEEN]: False,
+            symbol_notation_and_material[NOTATION][BLACK][KING]: False,
+            symbol_notation_and_material[NOTATION][BLACK][QUEEN]: False
         }
 
         for castling, castling_availability in zip(list(self.castling_availability.keys()), FEN_data["castling_availability"]):
@@ -75,12 +72,12 @@ class Board:
             possible_capturing_squares: list[PositionTuple] = possible_moves [1]
 
             for move in possible_moving_squares:
-                if self.grid[move].name != EMPTY:
+                if self.grid[move].name != EMPTY_STR:
                     break
                 valid_moves.append(move)
             
             for move in possible_capturing_squares:
-                if self.grid[move].name != EMPTY and self.grid[move].color != piece.color:
+                if self.grid[move].name != EMPTY_STR and self.grid[move].color != piece.color:
                     valid_moves.append(move)
             
             return valid_moves
@@ -88,7 +85,7 @@ class Board:
         else:
             for moves in possible_moves:
                 for move in moves:
-                    if self.grid[move].name != EMPTY:
+                    if self.grid[move].name != EMPTY_STR:
                         if self.grid[move].color != piece.color:
                             valid_moves.append(move)
                         break
@@ -97,12 +94,12 @@ class Board:
             return valid_moves
 
 
-    def is_king_under_check(self, color: int) -> bool:
-        for piece in pieces[NOTATION][WHITE]:
-            temp_piece: Piece = create_piece(piece, self.grid.king_position[color])
-            attacked_by_squares: list[list[PositionTuple]] = temp_piece.get_possible_moves()
+    # def is_king_under_check(self, color: int) -> bool:
+    #     for piece in symbol_notation_and_material[NOTATION][WHITE]:
+    #         temp_piece: Piece = create_piece(piece, self.grid.king_position[color])
+    #         attacked_by_squares: list[list[PositionTuple]] = temp_piece.get_possible_moves()
 
-        return False
+    #     return False
     
     
     def move(self, movement: MovementTuple) -> None:
@@ -129,7 +126,7 @@ class Board:
             self.grid[movement.final_position].is_moved,
             self.active_color
         ) = movement.final_position, True, (self.active_color + 1) % 2
-        self.grid[movement.initial_position] = pieces.create_piece(EMPTY, movement.initial_position)
+        self.grid[movement.initial_position] = create_piece(symbol_notation_and_material[NOTATION][EMPTY][EMPTY_STR], movement.initial_position)
 
 
 class Grid:
@@ -154,7 +151,7 @@ class Grid:
                 piece_notation = piece_placement[rank][file]
                 position = PositionTuple((rank, file))
                 
-                temp_piece: Piece = pieces.create_piece(piece_notation, position)
+                temp_piece: Piece = create_piece(piece_notation, position)
                 if temp_piece.name == KING:
                     self.king_position[temp_piece.color] = temp_piece.position
                 temp_list.append(temp_piece)
