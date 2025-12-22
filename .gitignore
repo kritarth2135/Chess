@@ -165,3 +165,5 @@ cython_debug/
 local/
 lib_testing/
 .pypirc
+
+test.py

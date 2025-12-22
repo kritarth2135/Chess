@@ -1,5 +1,6 @@
-from constants import *
+import constants as const
 from positions import PositionTuple
+
 
 
 class Piece:
@@ -24,6 +25,7 @@ class Piece:
         self.is_moved: bool = False
         self.color: int = color
         self.position: PositionTuple = position
+
     
     def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
@@ -37,17 +39,17 @@ class Piece:
         possible_moves_per_direction: list[list[PositionTuple]] = []
         possible_directions: list[str] = []
         
-        if self.name == QUEEN:
-            possible_directions += ALL_DIRECTIONS
-        elif self.name == ROOK:
-            possible_directions += STRAIGHT_DIRECTIONS
+        if self.name == const.QUEEN:
+            possible_directions += const.ALL_DIRECTIONS
+        elif self.name == const.ROOK:
+            possible_directions += const.STRAIGHT_DIRECTIONS
         else:
-            possible_directions += DIAGONAL_DIRECTIONS
+            possible_directions += const.DIAGONAL_DIRECTIONS
         
         for direction in possible_directions:
             temp_list: list[PositionTuple] = []
             position: PositionTuple | None = self.position
-            for _ in range(SIZE):
+            for _ in range(const.SIZE):
                 relative_postion: PositionTuple | None = position.get_relative_position(direction)
                 if relative_postion:
                     temp_list.append(relative_postion)
@@ -57,24 +59,24 @@ class Piece:
         return possible_moves_per_direction
 
 
-# Subclasses for each piece type.
 
 class Empty(Piece):
-    name: str = EMPTY_STR
-    material: int = symbol_notation_and_material[MATERIAL][name]
-    color: int = EMPTY
+    name: str = const.EMPTY_STR
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
+    color: int = const.EMPTY
     
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(Empty.color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][Empty.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Empty.name]
+
 
 class King(Piece):
-    name: str = KING
-    material: int = symbol_notation_and_material[MATERIAL][name]
+    name: str = const.KING
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][King.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][King.name]
         self.is_under_Check: bool = False
         self.Check_given_by: PositionTuple
     
@@ -87,7 +89,7 @@ class King(Piece):
         """
         possible_moves: list[list[PositionTuple]] = []
 
-        for direction in ALL_DIRECTIONS:
+        for direction in const.ALL_DIRECTIONS:
             relative_postion = self.position.get_relative_position(direction)
             if relative_postion:
                 temp_list: list[PositionTuple] = []
@@ -96,6 +98,7 @@ class King(Piece):
 
         return possible_moves
     
+
     # def get_possible_attacking_positions(self) -> list[list[PositionTuple]]:
     #     """
     #     Find all the possible positions from where the King can be attacked.
@@ -117,38 +120,43 @@ class King(Piece):
 
     #     return possible_attacking_positions
 
+
 class Queen(Piece):
-    name: str = QUEEN
-    material: int = symbol_notation_and_material[MATERIAL][name]
+    name: str = const.QUEEN
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][Queen.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Queen.name]
+
 
 class Rook(Piece):
-    name: str = ROOK
-    material: int = symbol_notation_and_material[MATERIAL][name]
+    name: str = const.ROOK
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][Rook.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Rook.name]
+
 
 class Bishop(Piece):
-    name: str = BISHOP
-    material: int = symbol_notation_and_material[MATERIAL][name]
+    name: str = const.BISHOP
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][Bishop.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Bishop.name]
+
 
 class Knight(Piece):
-    name: str = KNIGHT
-    material: int = symbol_notation_and_material[MATERIAL][name]
+    name: str = const.KNIGHT
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][Knight.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Knight.name]
     
+
     def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
         Find all the possible move of the Knight according to the rules of Chess.
@@ -161,14 +169,14 @@ class Knight(Piece):
         # straight moves before knight has to turn
         STRAIGHT_MOVES: int = 2
         
-        for dir in STRAIGHT_DIRECTIONS:
+        for dir in const.STRAIGHT_DIRECTIONS:
             position = self.position
             for _ in range(STRAIGHT_MOVES): 
                 if not position:
                     break
                 relative_position = position.get_relative_position(dir)
                 position = relative_position
-            for inner_dir in STRAIGHT_DIRECTIONS:
+            for inner_dir in const.STRAIGHT_DIRECTIONS:
                 if not position:
                     break
                 relative_position = position.get_relative_position(inner_dir)
@@ -180,13 +188,14 @@ class Knight(Piece):
         
         return possible_moves
 
+
 class Pawn(Piece):
-    name: str = PAWN
-    material: int = symbol_notation_and_material[MATERIAL][name]
+    name: str = const.PAWN
+    material: int = const.symbol_notation_and_material[const.MATERIAL][name]
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
-        self.symbol = symbol_notation_and_material[SYMBOL][color][Pawn.name]
+        self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Pawn.name]
     
     def get_possible_moves(self) -> list[list[PositionTuple]]:
         """
@@ -198,7 +207,7 @@ class Pawn(Piece):
         possible_moves: list[list[PositionTuple]] = []
 
         possible_no_of_moves: int = 1 if self.is_moved else 2
-        direction: str = DOWN if self.color == BLACK else UP
+        direction: str = const.DOWN if self.color == const.BLACK else const.UP
         position = self.position
         moving_squares: list[PositionTuple] = []
         capturing_squares: list[PositionTuple] = []
@@ -209,7 +218,7 @@ class Pawn(Piece):
                 moving_squares.append(relative_position)
                 position = relative_position
             if i == 0:
-                for dir in [LEFT, RIGHT]:
+                for dir in [const.LEFT, const.RIGHT]:
                     capturing_square: PositionTuple | None = position.get_relative_position(dir)
                     if capturing_square:
                         capturing_squares.append(capturing_square)
@@ -222,23 +231,41 @@ class Pawn(Piece):
 def create_piece(notation: str, position: PositionTuple) -> Piece:
     """Takes the notation and position as argument and creates a Piece according to it."""
 
-    if notation in [symbol_notation_and_material[NOTATION][WHITE][KING], symbol_notation_and_material[NOTATION][BLACK][KING]]:
-        return King(WHITE if notation.isupper() else BLACK, position)
+    if notation in [
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.KING],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.KING]
+        ]:
+        return King(const.WHITE if notation.isupper() else const.BLACK, position)
     
-    elif notation in [symbol_notation_and_material[NOTATION][WHITE][QUEEN], symbol_notation_and_material[NOTATION][BLACK][QUEEN]]:
-        return Queen(WHITE if notation.isupper() else BLACK, position)
+    elif notation in [
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.QUEEN],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.QUEEN]
+        ]:
+        return Queen(const.WHITE if notation.isupper() else const.BLACK, position)
     
-    elif notation in [symbol_notation_and_material[NOTATION][WHITE][ROOK], symbol_notation_and_material[NOTATION][BLACK][ROOK]]:
-        return Rook(WHITE if notation.isupper() else BLACK, position)
+    elif notation in [
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.ROOK],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.ROOK]
+        ]:
+        return Rook(const.WHITE if notation.isupper() else const.BLACK, position)
     
-    elif notation in [symbol_notation_and_material[NOTATION][WHITE][BISHOP], symbol_notation_and_material[NOTATION][BLACK][BISHOP]]:
-        return Bishop(WHITE if notation.isupper() else BLACK, position)
+    elif notation in [
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.BISHOP],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.BISHOP]
+        ]:
+        return Bishop(const.WHITE if notation.isupper() else const.BLACK, position)
     
-    elif notation in [symbol_notation_and_material[NOTATION][WHITE][KNIGHT], symbol_notation_and_material[NOTATION][BLACK][KNIGHT]]:
-        return Knight(WHITE if notation.isupper() else BLACK, position)
+    elif notation in [
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.KNIGHT],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.KNIGHT]
+        ]:
+        return Knight(const.WHITE if notation.isupper() else const.BLACK, position)
     
-    elif notation in [symbol_notation_and_material[NOTATION][WHITE][PAWN], symbol_notation_and_material[NOTATION][BLACK][PAWN]]:
-        return Pawn(WHITE if notation.isupper() else BLACK, position)
+    elif notation in [
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.PAWN],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.PAWN]
+        ]:
+        return Pawn(const.WHITE if notation.isupper() else const.BLACK, position)
     
     else:
-        return Empty(EMPTY, position)
+        return Empty(const.EMPTY, position)

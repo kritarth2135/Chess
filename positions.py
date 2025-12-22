@@ -1,6 +1,8 @@
 from __future__ import annotations
+from typing import Any
 
-from constants import *
+import constants as const
+
 
 
 class PositionTuple:
@@ -35,7 +37,7 @@ class PositionTuple:
     def __str__(self) -> str:
         """Returns the PositionTuple in a readable format"""
         
-        return f"({chr(ord("A") + self.file)}{SIZE - self.rank})"
+        return f"({chr(ord("A") + self.file)}{const.SIZE - self.rank})"
     
     def in_straight_direction(self, other: PositionTuple | Any) -> bool:
         """Returns true if both PositionTuple refer to the location in a straight line on grid"""
@@ -51,14 +53,14 @@ class PositionTuple:
         """Takes a PositionTuple and returns true if it is out of bounds of the grid."""
 
         for index in [self.rank, self.file]:
-            if index not in range(0, SIZE):
+            if index not in range(0, const.SIZE):
                 return True
         return False
     
     def get_relative_position(self, dir: str) -> PositionTuple | None:
         """Takes a PositionTuple and returns a PositionTuple according the direction given or returns None in case of failure."""
 
-        relative_position: PositionTuple = PositionTuple(self.position) + values_to_calculate_relative_direction[dir]
+        relative_position: PositionTuple = PositionTuple(self.position) + const.values_for_relative_position[dir]
         if self.is_out_of_bounds():
             return None
         return relative_position

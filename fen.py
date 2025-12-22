@@ -1,7 +1,8 @@
 from typing import Any
 import re
 
-from constants import *
+import constants as const
+
 
 
 def fen_parser(fen_string: str) -> dict[str, Any] | None:
@@ -21,7 +22,7 @@ def fen_parser(fen_string: str) -> dict[str, Any] | None:
     ) = modified_FEN.split(" ")
     
     FEN_data["piece_placement_data"] = piece_placement_data.split("/")
-    FEN_data["active_color"] = WHITE if active_color == "w" else BLACK
+    FEN_data["active_color"] = const.WHITE if active_color == "w" else const.BLACK
     FEN_data["castling_availability"] = list(castling_availability)
     FEN_data["en_passant_squares"] = en_passant_squares
     FEN_data["halfmove_count"] = int(halfmove_count)
@@ -67,10 +68,10 @@ def modified_castling_availability(castling_availability: list[str]):
     """Converts castling availability into a series of 0s and 1s in the sequence shown in valid_castling_sides"""
 
     valid_castling_sides: list[str] = [
-        symbol_notation_and_material[NOTATION][WHITE][KING],
-        symbol_notation_and_material[NOTATION][WHITE][QUEEN],
-        symbol_notation_and_material[NOTATION][BLACK][KING],
-        symbol_notation_and_material[NOTATION][BLACK][QUEEN],
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.KING],
+        const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.QUEEN],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.KING],
+        const.symbol_notation_and_material[const.NOTATION][const.BLACK][const.QUEEN],
     ]
 
     modified_castling_availability: str = ""

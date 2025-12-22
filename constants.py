@@ -23,7 +23,7 @@ DOWN_LEFT: str = "down_left"
 DOWN_RIGHT: str = "down_right"
 
 # Constants for calculating directions
-values_to_calculate_relative_direction: dict[str, PositionTuple] = {
+values_for_relative_position: dict[str, PositionTuple] = {
     UP: PositionTuple((-1, 0)),
     DOWN: PositionTuple((1, 0)),
     LEFT: PositionTuple((0, -1)),
