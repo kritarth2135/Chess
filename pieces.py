@@ -48,12 +48,13 @@ class Piece:
         
         for direction in possible_directions:
             temp_list: list[PositionTuple] = []
-            position: PositionTuple | None = self.position
+            position: PositionTuple = self.position
             for _ in range(const.SIZE):
-                relative_postion: PositionTuple | None = position.get_relative_position(direction)
-                if relative_postion:
-                    temp_list.append(relative_postion)
-                    position = relative_postion
+                relative_position: PositionTuple = position.get_relative_position(direction)
+                if relative_position.is_out_of_bounds():
+                    continue
+                temp_list.append(relative_position)
+                position = relative_position
             possible_moves_per_direction.append(temp_list)
         
         return possible_moves_per_direction
@@ -90,11 +91,12 @@ class King(Piece):
         possible_moves: list[list[PositionTuple]] = []
 
         for direction in const.ALL_DIRECTIONS:
-            relative_postion = self.position.get_relative_position(direction)
-            if relative_postion:
-                temp_list: list[PositionTuple] = []
-                temp_list.append(relative_postion)
-                possible_moves.append(temp_list)
+            relative_position = self.position.get_relative_position(direction)
+            if relative_position.is_out_of_bounds():
+                continue
+            temp_list: list[PositionTuple] = []
+            temp_list.append(relative_position)
+            possible_moves.append(temp_list)
 
         return possible_moves
     
@@ -172,19 +174,20 @@ class Knight(Piece):
         for dir in const.STRAIGHT_DIRECTIONS:
             position = self.position
             for _ in range(STRAIGHT_MOVES): 
-                if not position:
+                if position.is_out_of_bounds():
                     break
                 relative_position = position.get_relative_position(dir)
                 position = relative_position
             for inner_dir in const.STRAIGHT_DIRECTIONS:
-                if not position:
+                if position.is_out_of_bounds():
                     break
                 relative_position = position.get_relative_position(inner_dir)
-                if relative_position:
-                    if not relative_position.in_straight_direction(self.position):
-                        temp_list: list[PositionTuple] = []
-                        temp_list.append(relative_position)
-                        possible_moves.append(temp_list)
+                if relative_position.is_out_of_bounds():
+                    continue
+                if not relative_position.in_straight_direction(self.position):
+                    temp_list: list[PositionTuple] = []
+                    temp_list.append(relative_position)
+                    possible_moves.append(temp_list)
         
         return possible_moves
 
@@ -214,9 +217,10 @@ class Pawn(Piece):
         
         for i in range(possible_no_of_moves):
             relative_position = position.get_relative_position(direction)
-            if relative_position:
-                moving_squares.append(relative_position)
-                position = relative_position
+            if relative_position.is_out_of_bounds():
+                continue
+            moving_squares.append(relative_position)
+            position = relative_position
             if i == 0:
                 for dir in [const.LEFT, const.RIGHT]:
                     capturing_square: PositionTuple | None = position.get_relative_position(dir)
