@@ -34,7 +34,7 @@ def main() -> None:
                     sys.exit()
                 board.move(input_str_to_movement_tuple(input_str))
             except errors.CustomException as e:
-                print(f"\033[31m{e}\033[0m")
+                print(f"{const.RED}{e}{const.RESET}")
             else:
                 break
 

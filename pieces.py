@@ -34,8 +34,6 @@ class Piece:
         Returns:
             possible_moves: A list of possible moves grouped by direction.
         """
-
-        
         possible_moves_per_direction: list[list[PositionTuple]] = []
         possible_directions: list[str] = []
         
@@ -99,28 +97,6 @@ class King(Piece):
             possible_moves.append(temp_list)
 
         return possible_moves
-    
-
-    # def get_possible_attacking_positions(self) -> list[list[PositionTuple]]:
-    #     """
-    #     Find all the possible positions from where the King can be attacked.
-
-    #     Returns:
-    #         possible_attacking_positions: A list of positions grouped by direction
-    #     """
-
-    #     possible_attacking_positions: list[list[PositionTuple]] = []
-    #     temp_piece_1: Queen = Queen(EMPTY, self.position)
-    #     temp_piece_2: Knight = Knight(EMPTY, self.position)
-    #     temp_piece_3: Pawn = Pawn(EMPTY, self.position)
-
-    #     possible_attacking_positions += temp_piece_1.get_possible_moves()
-    #     possible_attacking_positions += temp_piece_2.get_possible_moves()
-
-    #     # Because for a pawn attacking squares are in 1st index of the returned list
-    #     possible_attacking_positions += [temp_piece_3.get_possible_moves()[1]]
-
-    #     return possible_attacking_positions
 
 
 class Queen(Piece):

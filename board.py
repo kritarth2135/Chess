@@ -50,15 +50,15 @@ class Board:
     def display(self) -> None:
         """Prints the Chess Board in a Visually Good manner."""
 
-        print("+---" * (const.SIZE + 1), "+", sep="")
+        print(f"{const.DIM}┌───┬───┬───┬───┬───┬───┬───┬───┬───┐{const.RESET}")
         for rank in range(const.SIZE):
-            print(f"| {const.SIZE - rank} | ", end="")
+            print(f"{const.DIM}│ {const.SIZE - rank} │ {const.RESET}", end="")
             for file in range(const.SIZE):
-                print(self.grid.grid[rank][file].symbol, end = " | ")
+                print(f"{const.BOLD}{self.grid.grid[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
             print()
-            print("+---" * (const.SIZE + 1), "+", sep="")
-        print("|   | A | B | C | D | E | F | G | H |")
-        print("+---" * (const.SIZE + 1), "+", sep="")
+            print(f"{const.DIM}├───┼───┼───┼───┼───┼───┼───┼───┼───┤{const.RESET}")
+        print(f"{const.DIM}│   │ A │ B │ C │ D │ E │ F │ G │ H │{const.RESET}")
+        print(f"{const.DIM}└───┴───┴───┴───┴───┴───┴───┴───┴───┘{const.RESET}")
 
     
     def valid_moves_from_possible_moves(self, piece: Piece) -> list[PositionTuple]:
@@ -93,14 +93,6 @@ class Board:
                     valid_moves.append(move)
             
             return valid_moves
-
-
-    # def is_king_under_check(self, color: int) -> bool:
-    #     for piece in symbol_notation_and_material[NOTATION][WHITE]:
-    #         temp_piece: Piece = create_piece(piece, self.grid.king_position[color])
-    #         attacked_by_squares: list[list[PositionTuple]] = temp_piece.get_possible_moves()
-
-    #     return False
     
     
     def move(self, movement: MovementTuple) -> None:
@@ -112,9 +104,6 @@ class Board:
             raise errors.InvalidMove
         if piece_to_move.color != self.active_color:
             raise errors.InvalidTurn
-        
-        # if self.grid[self.grid.king_position[self.active_color]].is_under_Check: # type: ignore
-        #     print("\033[31mYour King is under Check!\033[0m")
 
         valid_moves: list[PositionTuple] = self.valid_moves_from_possible_moves(piece_to_move)
         
