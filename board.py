@@ -123,6 +123,17 @@ class Board:
                                 king.is_under_Check = True
                     
     
+    def make_move(self, movement: MovementTuple) -> None:
+        self.grid[movement.final_position] = self.grid[movement.initial_position]
+        (
+            self.grid[movement.final_position].position,
+            self.grid[movement.final_position].is_moved
+        ) = movement.final_position, True
+        self.grid[movement.initial_position] = create_piece(
+            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
+            movement.initial_position
+        )
+
     
     def move(self, movement: MovementTuple) -> None:
         """Moves the piece on movement.initial_position to movement.final_position if it is valid."""
@@ -139,15 +150,16 @@ class Board:
         if movement.final_position not in valid_moves:
             raise errors.InvalidMove
 
-        self.grid[movement.final_position] = piece_to_move
-        (
-            self.grid[movement.final_position].position,
-            self.grid[movement.final_position].is_moved,
-            self.active_color
-        ) = movement.final_position, True, (self.active_color + 1) % 2
-        self.grid[movement.initial_position] = create_piece(const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR], movement.initial_position)
+        self.make_move(movement)
 
         self.update_is_under_Check()
+
+        active_players_king: King = self.grid[self.grid.king_position[self.active_color]] #type: ignore
+        if active_players_king.is_under_Check:
+            self.make_move(MovementTuple((movement.final_position, movement.initial_position)))
+            raise errors.KingStillUnderCheck
+        
+        self.active_color = (self.active_color + 1) % 2
 
 
 

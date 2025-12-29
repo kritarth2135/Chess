@@ -19,7 +19,7 @@ class InvalidMove(CustomException):
 
 class KingStillUnderCheck(CustomException):
     def __init__(self):
-        super().__init__("Your King is still under Check!")
+        super().__init__("Illegal move! Your King will be under Check.")
 
 class InvalidTurn(CustomException):
     def __init__(self):
