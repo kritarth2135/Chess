@@ -26,9 +26,8 @@ def main() -> None:
 
         while True:
             try:
-                # if board.grid[board.grid.king_position[board.active_color]].is_under_Check: # type: ignore
-                #     print("\033[31mYour King is under Check!\033[0m")
-                
+                if board.grid[board.grid.king_position[board.active_color]].is_under_Check: #type: ignore
+                    print(f"{const.RED}Your king is under Check!{const.RESET}")
                 input_str: str = input("Enter the move to play or 'exit' to quit: ")
                 if input_str.lower() == "exit":
                     sys.exit()

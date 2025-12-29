@@ -25,6 +25,16 @@ class Piece:
         self.is_moved: bool = False
         self.color: int = color
         self.position: PositionTuple = position
+        # self._attacked_squares: list[list[PositionTuple]]
+    
+
+    # @property
+    # def attacked_squares(self):
+    #     return self._attacked_squares
+    
+    # @attacked_squares.setter
+    # def attacked_squares(self):
+    #     self._attacked_squares = self.get_possible_moves()
 
     
     def get_possible_moves(self) -> list[list[PositionTuple]]:
@@ -97,6 +107,24 @@ class King(Piece):
             possible_moves.append(temp_list)
 
         return possible_moves
+    
+    def pieces_to_get_possible_attacking_squares(self) -> list[Piece]:
+        """
+        Returns pieces which can be used to get all possible attacking squares.
+        
+        Returns:
+            pieces_to_get_possible_attacking_squares: A list of all possible attacking squares grouped by direction.
+        """
+        pieces_to_get_possible_attacking_squares: list[Piece] = []
+
+        for piece in [
+            const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.QUEEN],
+            const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.KNIGHT],
+            const.symbol_notation_and_material[const.NOTATION][const.WHITE][const.PAWN]
+        ]:
+            pieces_to_get_possible_attacking_squares.append(create_piece(piece, self.position))
+        
+        return pieces_to_get_possible_attacking_squares
 
 
 class Queen(Piece):
@@ -181,7 +209,7 @@ class Pawn(Piece):
         Find all the possible move of the Pawn according to the rules of Chess.
         
         Returns:
-            possible_moves: A list of possible moves and capture moves.
+            possible_moves: A list of possible moves (at index 0) and capture moves (at index 1).
         """
         possible_moves: list[list[PositionTuple]] = []
 

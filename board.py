@@ -2,7 +2,7 @@ from typing import Any
 
 import constants as const
 from positions import PositionTuple, MovementTuple
-from pieces import Piece, create_piece
+from pieces import Piece, King, create_piece
 import errors
 import fen
 
@@ -93,6 +93,35 @@ class Board:
                     valid_moves.append(move)
             
             return valid_moves
+
+
+    def attacked_by_square(self, attacked_square: PositionTuple, attacked_by_square: PositionTuple) -> bool:
+        """Returns True if the attacked_square is attacked by the attacked_by_square."""
+
+        if self.grid[attacked_by_square].name == const.EMPTY_STR:
+            return False
+        if self.grid[attacked_square].color != self.grid[attacked_by_square].color:
+            if self.grid[attacked_by_square].name == const.PAWN:
+                attacked_squares: list[PositionTuple] = self.grid[attacked_by_square].get_possible_moves()[1]
+            else:
+                attacked_squares: list[PositionTuple] = self.valid_moves_from_possible_moves(self.grid[attacked_by_square])
+            if attacked_square in attacked_squares:
+                return True
+        return False
+    
+
+    def update_is_under_Check(self) -> None:
+        for king in [self.grid[self.grid.king_position[const.WHITE]], self.grid[self.grid.king_position[const.BLACK]]]:
+            if isinstance(king, King):
+                king.is_under_Check = False
+                pieces_to_get_possible_attacking_squares: list[Piece] = king.pieces_to_get_possible_attacking_squares()
+
+                for piece in pieces_to_get_possible_attacking_squares:
+                    for direction in piece.get_possible_moves():
+                        for square in direction:
+                            if self.attacked_by_square(king.position, square):
+                                king.is_under_Check = True
+                    
     
     
     def move(self, movement: MovementTuple) -> None:
@@ -104,7 +133,7 @@ class Board:
             raise errors.InvalidMove
         if piece_to_move.color != self.active_color:
             raise errors.InvalidTurn
-
+        
         valid_moves: list[PositionTuple] = self.valid_moves_from_possible_moves(piece_to_move)
         
         if movement.final_position not in valid_moves:
@@ -117,6 +146,8 @@ class Board:
             self.active_color
         ) = movement.final_position, True, (self.active_color + 1) % 2
         self.grid[movement.initial_position] = create_piece(const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR], movement.initial_position)
+
+        self.update_is_under_Check()
 
 
 
