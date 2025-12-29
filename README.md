@@ -6,12 +6,12 @@ What you __can__ do now:
 1. Import any game using a FEN string
 2. Move any piece
 3. Capture any piece
+4. Check the king
 
 What you __cannot__ do now:
-1. Check the king
-2. Checkmate the king
-3. Castle
-4. En passant capture
+1. Checkmate the king
+2. Castle
+3. En passant capture
 
 ## How to play:
 First, clone this repository and then run:
