@@ -24,7 +24,7 @@ python main.py "starting_fen"
 ```
 
 ## User input format
-Input is taken as follows, __with__ any space in between
+Input is taken as follows, __with__ space in between
 ```
 <starting_square> <ending square>
 ```
@@ -36,6 +36,6 @@ where ranks (horizontal rows) are from 1 to 8 (bottom to top), and files (vertic
 
 For example if you want to move your pawn from ``e2`` to ``e4`` then:
 ```
-e2,e4
+e2 e4
 ```
 The inputs are case __insensitive__.
