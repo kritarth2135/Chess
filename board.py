@@ -2,7 +2,7 @@ from typing import Any
 
 import constants as const
 from positions import PositionTuple, MovementTuple
-from pieces import Piece, King, create_piece
+from pieces import Piece, King, Pawn, create_piece
 import errors
 import fen
 
@@ -60,75 +60,91 @@ class Board:
         print(f"{const.DIM}│   │ A │ B │ C │ D │ E │ F │ G │ H │{const.RESET}")
         print(f"{const.DIM}└───┴───┴───┴───┴───┴───┴───┴───┴───┘{const.RESET}")
 
-    
-    def valid_moves_from_possible_moves(self, piece: Piece) -> list[PositionTuple]:
-        """Returns valid moves from possible moves according to current position of the board."""
-        
-        possible_moves: list[list[PositionTuple]] = piece.get_possible_moves()
-        valid_moves: list[PositionTuple] = []
-        
-        if piece.name == const.PAWN:
-            # Pawn is handled specially
-            possible_moving_squares: list[PositionTuple] = possible_moves[0]
-            possible_capturing_squares: list[PositionTuple] = possible_moves [1]
 
-            for move in possible_moving_squares:
-                if self.grid[move].name != const.EMPTY_STR:
-                    break
-                valid_moves.append(move)
-            
-            for move in possible_capturing_squares:
-                if self.grid[move].name != const.EMPTY_STR and self.grid[move].color != piece.color:
-                    valid_moves.append(move)
-            
-            return valid_moves
+    def get_legal_moves(self, piece: Piece) -> list[PositionTuple]:
+        legal_moves: list[PositionTuple] = []
+        position: PositionTuple = piece.position
         
-        else:
-            for moves in possible_moves:
-                for move in moves:
-                    if self.grid[move].name != const.EMPTY_STR:
+        if piece.can_slide:
+            directions: list[str] = piece.directions_to_get_possible_moves
+
+            for direction in directions:
+                move: PositionTuple = position.get_relative_position(direction)
+                while not move.is_out_of_bounds():
+                    if self.grid[move].color != const.EMPTY:
                         if self.grid[move].color != piece.color:
-                            valid_moves.append(move)
+                            legal_moves.append(move)
                         break
-                    valid_moves.append(move)
-            
-            return valid_moves
+                    legal_moves.append(move)
+                    move = move.get_relative_position(direction)
+        
+        if isinstance(piece, Pawn):
+            values: list[PositionTuple] = piece.values_to_calculate_possible_moves
+            if piece.is_moved:
+                values.pop()
+            for value in values:
+                move: PositionTuple = position + value
+                if not move.is_out_of_bounds():
+                    if self.grid[move].color == piece.color:
+                        continue
+                    legal_moves.append(move)
+            values = piece.values_to_calculate_possible_captures
+            for value in values:
+                move: PositionTuple = position + value
+                if not move.is_out_of_bounds():
+                    if self.grid[move].color == (piece.color + 1) % 2:
+                        legal_moves.append(move)
+
+        else:
+            values: list[PositionTuple] = piece.values_to_calculate_possible_moves
+
+            for value in values:
+                move: PositionTuple = position + value
+                if not move.is_out_of_bounds():
+                    if self.grid[move].color == piece.color:
+                        continue
+                    legal_moves.append(move)
+        
+        return legal_moves
 
 
     def attacked_by_square(self, attacked_square: PositionTuple, attacked_by_square: PositionTuple) -> bool:
         """Returns True if the attacked_square is attacked by the attacked_by_square."""
 
-        if self.grid[attacked_by_square].name == const.EMPTY_STR:
+        if self.grid[attacked_by_square].color == const.EMPTY:
             return False
         if self.grid[attacked_square].color != self.grid[attacked_by_square].color:
-            if self.grid[attacked_by_square].name == const.PAWN:
-                attacked_squares: list[PositionTuple] = self.grid[attacked_by_square].get_possible_moves()[1]
+            if isinstance(self.grid[attacked_by_square], Pawn):
+                attacked_squares: list[PositionTuple] = []
+                for square in self.get_legal_moves(self.grid[attacked_by_square]):
+                    if not square.in_straight_direction(attacked_by_square):
+                        attacked_squares.append(square)
             else:
-                attacked_squares: list[PositionTuple] = self.valid_moves_from_possible_moves(self.grid[attacked_by_square])
+                attacked_squares: list[PositionTuple] = self.get_legal_moves(self.grid[attacked_by_square])
             if attacked_square in attacked_squares:
                 return True
         return False
     
 
-    def update_is_under_Check(self) -> None:
-        for king in [self.grid[self.grid.king_position[const.WHITE]], self.grid[self.grid.king_position[const.BLACK]]]:
-            if isinstance(king, King):
-                king.is_under_Check = False
-                pieces_to_get_possible_attacking_squares: list[Piece] = king.pieces_to_get_possible_attacking_squares()
+    def update_is_under_Check(self, king: King) -> None:
+        king.is_under_Check = False
+        for piece in king.pieces_to_get_possible_attacking_squares():
+            for square in self.get_legal_moves(piece):
+                if self.attacked_by_square(king.position, square):
+                    king.is_under_Check = True
+                    return
 
-                for piece in pieces_to_get_possible_attacking_squares:
-                    for direction in piece.get_possible_moves():
-                        for square in direction:
-                            if self.attacked_by_square(king.position, square):
-                                king.is_under_Check = True
-                    
-    
+
     def make_move(self, movement: MovementTuple) -> None:
         self.grid[movement.final_position] = self.grid[movement.initial_position]
         (
             self.grid[movement.final_position].position,
             self.grid[movement.final_position].is_moved
         ) = movement.final_position, True
+
+        if isinstance(self.grid[movement.final_position], King):
+            self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
+
         self.grid[movement.initial_position] = create_piece(
             const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
             movement.initial_position
@@ -139,20 +155,21 @@ class Board:
         """Moves the piece on movement.initial_position to movement.final_position if it is valid."""
 
         piece_to_move: Piece = self.grid[movement.initial_position]
-        
+
         if piece_to_move.color == const.EMPTY:
             raise errors.InvalidMove
         if piece_to_move.color != self.active_color:
             raise errors.InvalidTurn
         
-        valid_moves: list[PositionTuple] = self.valid_moves_from_possible_moves(piece_to_move)
+        legal_moves: list[PositionTuple] = self.get_legal_moves(piece_to_move)
         
-        if movement.final_position not in valid_moves:
+        if movement.final_position not in legal_moves:
             raise errors.InvalidMove
 
         self.make_move(movement)
 
-        self.update_is_under_Check()
+        for king_position in self.grid.king_position.values():
+            self.update_is_under_Check(self.grid[king_position]) #type: ignore
 
         active_players_king: King = self.grid[self.grid.king_position[self.active_color]] #type: ignore
         if active_players_king.is_under_Check:
@@ -185,7 +202,7 @@ class Grid:
                 position = PositionTuple((rank, file))
                 
                 temp_piece: Piece = create_piece(piece_notation, position)
-                if temp_piece.name == const.KING:
+                if isinstance(temp_piece, King):
                     self.king_position[temp_piece.color] = temp_piece.position
                 temp_list.append(temp_piece)
 

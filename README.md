@@ -24,9 +24,9 @@ python main.py "starting_fen"
 ```
 
 ## User input format
-Input is taken as follows, __without__ any space in between
+Input is taken as follows, __with__ any space in between
 ```
-<starting_square>,<ending square>
+<starting_square> <ending square>
 ```
 A square is denoted by the following:
 ```

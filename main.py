@@ -21,7 +21,7 @@ def main() -> None:
         sys.exit(1)
 
     while True:
-        clear_screen()
+        # clear_screen()
         board.display()
 
         if board.grid[board.grid.king_position[board.active_color]].is_under_Check: #type: ignore

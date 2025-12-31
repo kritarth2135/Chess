@@ -10,7 +10,7 @@ class InvalidInput(CustomException):
     def __init__(self):
         super().__init__(
             "Invalid Input format.\n"
-            "Format to enter input: \"<starting_square>,<ending_square>\""
+            "Format to enter input: \"<starting_square> <ending_square>\""
         )
 
 class InvalidMove(CustomException):

@@ -13,7 +13,7 @@ def input_str_to_movement_tuple(input_str: str) -> MovementTuple:
     if not input_str_validator(input_str):
         raise errors.InvalidInput
     
-    input_list = input_str.split(",")
+    input_list = input_str.split(" ")
     movement_list: list[PositionTuple] = []
 
     for string in input_list:
@@ -32,8 +32,8 @@ def alg_notation_to_position_tuple(alg_notation: str) -> PositionTuple:
 
 
 def input_str_validator(input_str: str) -> bool:
-    """Takes the input string and returns true if it is of the form '<starting_square>,<ending_square>'."""
+    """Takes the input string and returns true if it is of the form '<starting_square><any_separator><ending_square>'."""
     
-    input_regex = "([a-h][0-8]),([a-h][0-8])"
+    input_regex = r"([a-h][1-8])[ ]([a-h][1-8])"
     return bool(re.fullmatch(input_regex, input_str))
 
