@@ -2,6 +2,9 @@ from typing import Any
 
 from positions import PositionTuple
 
+# Constants for GUI
+WIDTH: int = 800
+HEIGHT: int = 800
 
 
 # Length of the square chess grid 
