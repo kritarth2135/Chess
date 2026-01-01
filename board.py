@@ -78,7 +78,7 @@ class Board:
                     legal_moves.append(move)
                     move = move.get_relative_position(direction)
         
-        if isinstance(piece, Pawn):
+        elif isinstance(piece, Pawn):
             values: list[PositionTuple] = piece.values_to_calculate_possible_moves
             if piece.is_moved:
                 values.pop()
