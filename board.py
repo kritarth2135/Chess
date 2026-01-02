@@ -54,7 +54,7 @@ class Board:
         for rank in range(const.SIZE):
             print(f"{const.DIM}│ {const.SIZE - rank} │ {const.RESET}", end="")
             for file in range(const.SIZE):
-                print(f"{const.BOLD}{self.grid.grid[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
+                print(f"{const.BOLD}{self.grid.array[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
             print()
             print(f"{const.DIM}├───┼───┼───┼───┼───┼───┼───┼───┼───┤{const.RESET}")
         print(f"{const.DIM}│   │ A │ B │ C │ D │ E │ F │ G │ H │{const.RESET}")
@@ -191,7 +191,7 @@ class Grid:
         grid: A 2D list of Piece showing the state of the Chess Board.
     """
     def __init__(self, piece_placement: list[list[str]]) -> None:
-        self.grid: list[list[Piece]] = []
+        self.array: list[list[Piece]] = []
         self.king_position: dict[int, PositionTuple] = {}
 
         for rank in range(const.SIZE):
@@ -206,16 +206,16 @@ class Grid:
                     self.king_position[temp_piece.color] = temp_piece.position
                 temp_list.append(temp_piece)
 
-            self.grid.append(temp_list)
+            self.array.append(temp_list)
     
 
     def __getitem__(self, key: PositionTuple):
         """Returns the item from grid at position key."""
 
-        return self.grid[key.rank][key.file]
+        return self.array[key.rank][key.file]
     
 
     def __setitem__(self, key: PositionTuple, value: Piece):
         """Sets the key position of the grid to the value."""
 
-        self.grid[key.rank][key.file] = value
+        self.array[key.rank][key.file] = value

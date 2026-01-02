@@ -1,3 +1,5 @@
+import pygame
+
 import constants as const
 from positions import PositionTuple
 
@@ -29,6 +31,8 @@ class Piece:
         self.can_slide: bool
         self.directions_to_get_possible_moves: list[str]
         self.values_to_calculate_possible_moves: list[PositionTuple]
+        self.icon: pygame.Surface
+        self.rect: pygame.Rect
 
 
 class Empty(Piece):
@@ -62,7 +66,7 @@ class King(Piece):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][King.name]
         self.is_under_Check: bool = False
-        self.Check_given_by: PositionTuple
+        self.icon = pygame.image.load("assets/king_white.png") if color == const.WHITE else pygame.image.load("assets/king_black.png")
    
     
     def pieces_to_get_possible_attacking_squares(self) -> list[Piece]:
@@ -94,6 +98,7 @@ class Queen(Piece):
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Queen.name]
+        self.icon = pygame.image.load("assets/queen_white.png") if color == const.WHITE else pygame.image.load("assets/queen_black.png")
 
 
 class Rook(Piece):
@@ -106,6 +111,7 @@ class Rook(Piece):
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Rook.name]
+        self.icon = pygame.image.load("assets/rook_white.png") if color == const.WHITE else pygame.image.load("assets/rook_black.png")
 
 
 class Bishop(Piece):
@@ -118,6 +124,7 @@ class Bishop(Piece):
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Bishop.name]
+        self.icon = pygame.image.load("assets/bishop_white.png") if color == const.WHITE else pygame.image.load("assets/bishop_black.png")
 
 
 class Knight(Piece):
@@ -139,6 +146,8 @@ class Knight(Piece):
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Knight.name]
+        self.icon = pygame.image.load("assets/knight_white.png") if color == const.WHITE else pygame.image.load("assets/knight_black.png")
+
 
 class Pawn(Piece):
     name: str = const.PAWN
@@ -163,6 +172,8 @@ class Pawn(Piece):
             PositionTuple((1, 1)),
             PositionTuple((1, -1))
         ]
+        self.icon = pygame.image.load("assets/pawn_white.png") if color == const.WHITE else pygame.image.load("assets/pawn_black.png")
+
 
 def create_piece(notation: str, position: PositionTuple) -> Piece:
     """Takes the notation and position as argument and creates a Piece according to it."""
