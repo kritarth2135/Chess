@@ -30,27 +30,33 @@ def main():
     chess_board_rect = chess_board.get_rect()
 
     running: bool = True
+    dragging: bool = False
+    selected_piece: PositionTuple = PositionTuple((0, 0))
+    
     while running:
         clock.tick(const.MAX_FPS)
-        selected_piece: PositionTuple | None = None
+        # clock.tick()
 
         for event in pygame.event.get():
-            print(event)
+            # print(event)
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 for rank in range(const.SIZE):
                     for file in range(const.SIZE):
                         if board.grid.array[rank][file].color != const.EMPTY and board.grid.array[rank][file].rect.collidepoint(event.pos):
-                            selected_piece = PositionTuple((rank, file))
-                            board.grid[selected_piece].rect.centerx = event.pos[0]
-                            board.grid[selected_piece].rect.centery = event.pos[1]
-            elif event.type == pygame.MOUSEBUTTONUP:
-                selected_piece = None
-            elif event.type == pygame.MOUSEMOTION:
-                if selected_piece:
-                    board.grid[selected_piece].rect.centerx = event.pos[0]
-                    board.grid[selected_piece].rect.centery = event.pos[1]
+                            selected_piece.update(PositionTuple((rank, file)))
+                            dragging = True
+
+                            board.grid[selected_piece].rect.center = event.pos
+                            break
+            if event.type == pygame.MOUSEBUTTONUP:
+                dragging = False
+                board.grid[selected_piece].rect.x = const.X_OFFSET + (((event.pos[0] - const.X_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE)
+                board.grid[selected_piece].rect.y = const.Y_OFFSET + (((event.pos[1] - const.Y_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE)
+            if event.type == pygame.MOUSEMOTION:
+                if dragging:
+                    board.grid[selected_piece].rect.center = event.pos
 
         screen.blit(pygame.transform.scale(chess_board, (const.BOARD_HEIGHT, const.BOARD_HEIGHT)), chess_board_rect)
         blit_icons(screen, board)

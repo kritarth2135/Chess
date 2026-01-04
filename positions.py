@@ -69,6 +69,12 @@ class PositionTuple:
 
         relative_position: PositionTuple = PositionTuple(self.position) + const.values_for_relative_position[dir]
         return relative_position
+    
+
+    def update(self, other: PositionTuple) -> None:
+        """Updates the PositionTuple to other."""
+        self.rank = other.rank
+        self.file = other.file
 
 
 
