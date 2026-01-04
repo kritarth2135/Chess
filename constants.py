@@ -3,16 +3,16 @@ from typing import Any
 from positions import PositionTuple
 
 # Constants for GUI
-BOARD_WIDTH: int = 600
-BOARD_HEIGHT: int = 600
-PIECE_WIDTH: int = 40
-PIECE_HEIGHT: int = 40
+BOARD_WIDTH: int = 800
+BOARD_HEIGHT: int = 800
+PIECE_WIDTH: int = 60
+PIECE_HEIGHT: int = 60
 
-X_OFFSET: int = 70
-Y_OFFSET: int = 70
-GRID_SIZE: int = 60
+X_OFFSET: int = 90
+Y_OFFSET: int = 90
+GRID_SIZE: int = 80
 
-FPS: int = 60
+MAX_FPS: int = 60
 
 # Length of the square chess grid 
 SIZE: int = 8
