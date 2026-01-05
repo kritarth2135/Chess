@@ -32,7 +32,6 @@ class Piece:
         self.directions_to_get_possible_moves: list[str]
         self.values_to_calculate_possible_moves: list[PositionTuple]
         self.icon: pygame.Surface
-        self.rect: pygame.Rect
 
 
 class Empty(Piece):
@@ -68,12 +67,6 @@ class King(Piece):
         self.is_under_Check: bool = False
         self.icon = pygame.image.load("assets/king_white.png") if color == const.WHITE else pygame.image.load("assets/king_black.png")
 
-        self.rect: pygame.Rect = self.icon.get_rect() 
-        self.rect.x = const.X_OFFSET + (position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (position.rank * const.GRID_SIZE)
-        self.rect.width = const.PIECE_WIDTH
-        self.rect.height = const.PIECE_HEIGHT
-
 
     def pieces_to_get_possible_attacking_squares(self) -> list[Piece]:
         """
@@ -106,12 +99,6 @@ class Queen(Piece):
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Queen.name]
         self.icon = pygame.image.load("assets/queen_white.png") if color == const.WHITE else pygame.image.load("assets/queen_black.png")
 
-        self.rect: pygame.Rect = self.icon.get_rect() 
-        self.rect.x = const.X_OFFSET + (position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (position.rank * const.GRID_SIZE)
-        self.rect.width = const.PIECE_WIDTH
-        self.rect.height = const.PIECE_HEIGHT
-
 
 class Rook(Piece):
     name: str = const.ROOK
@@ -125,12 +112,6 @@ class Rook(Piece):
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Rook.name]
         self.icon = pygame.image.load("assets/rook_white.png") if color == const.WHITE else pygame.image.load("assets/rook_black.png")
 
-        self.rect: pygame.Rect = self.icon.get_rect()
-        self.rect.x = const.X_OFFSET + (position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (position.rank * const.GRID_SIZE)
-        self.rect.width = const.PIECE_WIDTH
-        self.rect.height = const.PIECE_HEIGHT
-
 
 class Bishop(Piece):
     name: str = const.BISHOP
@@ -143,12 +124,6 @@ class Bishop(Piece):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Bishop.name]
         self.icon = pygame.image.load("assets/bishop_white.png") if color == const.WHITE else pygame.image.load("assets/bishop_black.png")
-
-        self.rect: pygame.Rect = self.icon.get_rect()
-        self.rect.x = const.X_OFFSET + (position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (position.rank * const.GRID_SIZE)
-        self.rect.width = const.PIECE_WIDTH
-        self.rect.height = const.PIECE_HEIGHT
 
 
 class Knight(Piece):
@@ -171,12 +146,6 @@ class Knight(Piece):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Knight.name]
         self.icon = pygame.image.load("assets/knight_white.png") if color == const.WHITE else pygame.image.load("assets/knight_black.png")
-
-        self.rect: pygame.Rect = self.icon.get_rect()
-        self.rect.x = const.X_OFFSET + (position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (position.rank * const.GRID_SIZE)
-        self.rect.width = const.PIECE_WIDTH
-        self.rect.height = const.PIECE_HEIGHT
 
 
 class Pawn(Piece):
@@ -203,12 +172,6 @@ class Pawn(Piece):
             PositionTuple((1, -1))
         ]
         self.icon = pygame.image.load("assets/pawn_white.png") if color == const.WHITE else pygame.image.load("assets/pawn_black.png")
-
-        self.rect: pygame.Rect = self.icon.get_rect()
-        self.rect.x = const.X_OFFSET + (position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (position.rank * const.GRID_SIZE)
-        self.rect.width = const.PIECE_WIDTH
-        self.rect.height = const.PIECE_HEIGHT
 
 
 def create_piece(notation: str, position: PositionTuple) -> Piece:
