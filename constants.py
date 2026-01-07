@@ -3,6 +3,20 @@ from typing import Any
 from positions import PositionTuple
 
 
+# Constants for GUI
+BOARD_WIDTH: int = 800
+BOARD_HEIGHT: int = 800
+PIECE_WIDTH: int = 60
+PIECE_HEIGHT: int = 60
+
+X_OFFSET: int = 90
+Y_OFFSET: int = 90
+GRID_SIZE: int = 80
+
+MAX_FPS: int = 60
+
+X_VALUE: int = 0
+Y_VALUE: int = 1
 
 # Length of the square chess grid 
 SIZE: int = 8
@@ -107,8 +121,11 @@ symbol_notation_and_material: dict[str, Any] = {
 }
 
 DEFAULT_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+NUMBER_OF_FEN_COMPONENTS: int = 6
 
 DIM: str = "\033[2m"
 BOLD: str = "\033[1m"
 RED: str = "\033[31m"
 RESET: str = "\033[0m"
+
+SENTINAL_POSITION: PositionTuple = PositionTuple((-1, -1))

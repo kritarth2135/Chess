@@ -1,50 +1,28 @@
-import sys
-import os
+import argparse
 
 import constants as const
-from board import Board
-from inputs import input_str_to_movement_tuple
-import errors
+from cli import main_cli
+from gui import main_gui
+
+class Args:
+    def __init__(self) -> None:
+        self.cli: bool
+        self.fen: str
+
+parser = argparse.ArgumentParser(
+    prog="main.py"
+)
+args = Args()
+parser.add_argument("fen",nargs="?", default=const.DEFAULT_FEN)
+parser.add_argument("-c", "--cli", action="store_true", help="Add this flag to run this program in cli.")
+parser.parse_args(namespace=args)
 
 
-
-def main() -> None:
-    if len(sys.argv) == 2:
-        starting_fen = sys.argv[1]
+def main():
+    if args.cli:
+        main_cli(args.fen)
     else:
-        starting_fen = const.DEFAULT_FEN
-    
-    try:
-        board = Board(starting_fen)
-    except errors.InvalidFEN:
-        print("Invalid FEN string passed.")
-        sys.exit(1)
-
-    while True:
-        # clear_screen()
-        board.display()
-
-        if board.grid[board.grid.king_position[board.active_color]].is_under_Check: #type: ignore
-            print(f"{const.RED}Your king is under Check!{const.RESET}")
-
-        while True:
-            try:
-                input_str: str = input("Enter the move to play or 'exit' to quit: ")
-                if input_str.lower() == "exit":
-                    sys.exit()
-                board.move(input_str_to_movement_tuple(input_str))
-            except errors.CustomException as e:
-                print(f"{const.RED}{e}{const.RESET}")
-            else:
-                break
-
-
-def clear_screen() -> None:
-    """Clears the screen of the terminal."""
-    if os.name == "nt":
-        os.system("cls")
-    else:
-        os.system("clear")
+        main_gui(args.fen)
 
 
 if __name__ == "__main__":

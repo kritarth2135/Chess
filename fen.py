@@ -7,6 +7,9 @@ import constants as const
 
 def fen_parser(fen_string: str) -> dict[str, Any] | None:
     """Takes a FEN string and scrapes all information from it and returns a dictionary of all data."""
+
+    if len(fen_string.split(" ")) != const.NUMBER_OF_FEN_COMPONENTS:
+        return None
     modified_FEN: str = FEN_to_modified_FEN(fen_string)
     if not modified_FEN_string_validator(modified_FEN):
         return None
