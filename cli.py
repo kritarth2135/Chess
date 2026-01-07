@@ -8,12 +8,7 @@ import errors
 
 
 
-def main() -> None:
-    if len(sys.argv) == 2:
-        starting_fen = sys.argv[1]
-    else:
-        starting_fen = const.DEFAULT_FEN
-    
+def main_cli(starting_fen: str) -> None:
     try:
         board = Board(starting_fen)
     except errors.InvalidFEN:
@@ -48,4 +43,4 @@ def clear_screen() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main_cli(const.DEFAULT_FEN)

@@ -2,7 +2,7 @@ from typing import Any
 
 import constants as const
 from positions import PositionTuple, MovementTuple
-from pieces import Piece, King, Pawn, create_piece
+from pieces import Piece, King, Pawn, Empty, create_piece
 import errors
 import fen
 
@@ -22,6 +22,7 @@ class Board:
         en_passant_squares: A string containing all the squares on which a pawn can move to make an en passant capture.
         halfmove_count: The number of halfmoves.
         fullmove_count: The number of fullmoves.
+        captured_pieces: List of captured pieces.
     """
     def __init__(self, fen_string: str) -> None:
         FEN_data: dict[str, Any] | None = fen.fen_parser(fen_string)
@@ -30,7 +31,7 @@ class Board:
         
         self.active_color: int = FEN_data["active_color"]
         self.en_passant_squares: str = FEN_data["en_passant_squares"]
-        self.halfmove_clock: int = FEN_data["halfmove_count"]
+        self.halfmove_count: int = FEN_data["halfmove_count"]
         self.fullmove_count: int = FEN_data["fullmove_count"]
 
         self.grid = Grid(FEN_data["piece_placement_data"])
@@ -45,6 +46,8 @@ class Board:
         for castling, castling_availability in zip(list(self.castling_availability.keys()), FEN_data["castling_availability"]):
             if int(castling_availability) == 1:
                 self.castling_availability[castling] = True
+        
+        self.captured_pieces: list[Piece] = []
     
         
     def display(self) -> None:
@@ -136,6 +139,9 @@ class Board:
 
 
     def make_move(self, movement: MovementTuple) -> None:
+        if not isinstance(self.grid[movement.final_position], Empty):
+            self.captured_pieces.append(self.grid[movement.final_position])
+
         self.grid[movement.final_position] = self.grid[movement.initial_position]
         (
             self.grid[movement.final_position].position,
@@ -177,6 +183,9 @@ class Board:
             raise errors.KingStillUnderCheck
         
         self.active_color = (self.active_color + 1) % 2
+        self.halfmove_count += 1
+        if self.active_color == const.BLACK:
+            self.fullmove_count += 1
 
 
 

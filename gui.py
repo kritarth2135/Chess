@@ -7,12 +7,7 @@ from pieces import Piece
 from positions import PositionTuple, MovementTuple
 import errors
 
-def main():
-    if len(sys.argv) == 2:
-        starting_fen = sys.argv[1]
-    else:
-        starting_fen = const.DEFAULT_FEN
-    
+def main_gui(starting_fen: str):
     try:
         board = Board(starting_fen)
     except errors.InvalidFEN:
@@ -28,8 +23,8 @@ def main():
     chess_board.convert()
     chess_board_rect = chess_board.get_rect()
 
-    sprites: AllSprites = AllSprites(board)
-    backup_sprites: list[PieceSprite] = sprites.create_backup()
+    all_sprites: AllSprites = AllSprites(board)
+    backup_sprites: list[PieceSprite] = all_sprites.create_backup()
 
     running: bool = True
     dragging: bool = False
@@ -39,43 +34,35 @@ def main():
     
     while running:
         clock.tick(const.MAX_FPS)
-        # clock.tick()
 
         for event in pygame.event.get():
-            # print(event)
             if event.type == pygame.QUIT:
                 running = False
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos: tuple[int, int] = event.pos
-                for index, sprite in enumerate(sprites.sprites):
+                for index, sprite in enumerate(all_sprites.sprites):
                     if sprite.rect.collidepoint(pos):
-                        # backup_sprites = sprites.create_backup()
+                        backup_sprites = all_sprites.create_backup()
                         dragging = True
                         dragged_sprite_index = index
                         sprite.rect.center = pos
                         
-                        initial_position = PositionTuple((
-                            ((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE),
-                            ((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE)
-                        ))
+                        initial_position = position_to_positiontuple(pos)
                         break
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if dragging:
                     dragging = False
-                    pos: tuple[int, int] = event.pos
-                    sprites.sprites[dragged_sprite_index].rect.x = const.X_OFFSET + (((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE)
-                    sprites.sprites[dragged_sprite_index].rect.y = const.Y_OFFSET + (((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE)
+                    pos: tuple[int, int] = position_to_grid_position(event.pos)
+                    all_sprites.sprites[dragged_sprite_index].rect.x = pos[0]
+                    all_sprites.sprites[dragged_sprite_index].rect.y = pos[1]
 
-                    final_position = PositionTuple((
-                        ((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE),
-                        ((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE)
-                    ))
+                    final_position = position_to_positiontuple(pos)
 
             if event.type == pygame.MOUSEMOTION:
                 if dragging:
-                    sprites.sprites[dragged_sprite_index].rect.center = event.pos
+                    all_sprites.sprites[dragged_sprite_index].rect.center = event.pos
                     
         try:
             if (not initial_position.is_out_of_bounds()) and  (not final_position.is_out_of_bounds()):
@@ -84,17 +71,20 @@ def main():
                 initial_position = const.SENTINAL_POSITION
                 final_position = const.SENTINAL_POSITION
 
+                for index, sprite in enumerate(all_sprites.sprites):
+                    if sprite.piece in board.captured_pieces:
+                        all_sprites.sprites.pop(index)
+
         except errors.CustomException as e:
             initial_position = const.SENTINAL_POSITION
             final_position = const.SENTINAL_POSITION
-            sprites.restore(backup_sprites)
+            all_sprites.restore(backup_sprites)
             print(f"{const.RED}{e}{const.RESET}")
 
         screen.blit(pygame.transform.scale(chess_board, (const.BOARD_HEIGHT, const.BOARD_HEIGHT)), chess_board_rect)
-        for sprite in sprites.sprites:
+        for sprite in all_sprites.sprites:
             screen.blit(sprite.image, sprite.rect)
         pygame.display.update()
-        # print(clock.get_fps())
 
     pygame.quit()
 
@@ -112,7 +102,7 @@ class PieceSprite(pygame.sprite.Sprite):
 
     def copy(self):
         copy: PieceSprite = PieceSprite(self.piece)
-        copy.rect = self.rect
+        copy.rect = self.rect.copy()
         return copy
 
 
@@ -138,5 +128,19 @@ class AllSprites:
         self.sprites = sprites
 
 
+def position_to_grid_position(pos: tuple[int, int]) -> tuple[int, int]:
+    grid_pos: list[int] = []
+    grid_pos.append(const.X_OFFSET + (((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE))
+    grid_pos.append(const.Y_OFFSET + (((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE))
+    return tuple(grid_pos) #type: ignore
+
+
+def position_to_positiontuple(pos: tuple[int, int]) -> PositionTuple:
+    return PositionTuple((
+        ((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE),
+        ((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE)
+    ))
+
+
 if __name__ == "__main__":
-    main()
+    main_gui(const.DEFAULT_FEN)
