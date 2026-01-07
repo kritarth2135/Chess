@@ -83,9 +83,8 @@ class Board:
         
         elif isinstance(piece, Pawn):
             values: list[PositionTuple] = piece.values_to_calculate_possible_moves
-            if piece.is_moved:
-                values.pop()
-            for value in values:
+            upper_bound: int = len(values) - 1 if piece.is_moved else len(values)
+            for value in values[:upper_bound]:
                 move: PositionTuple = position + value
                 if not move.is_out_of_bounds():
                     if self.grid[move].color == piece.color:
