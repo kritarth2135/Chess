@@ -1,5 +1,5 @@
 # Chess
-This is a chess game made in python.
+This is a chess engine implemented in python.
 
 ## Features
 What you __can__ do now:
@@ -22,8 +22,14 @@ If you want to overwrite default starting position, you can import a custom boar
 ```
 python main.py "starting_fen"
 ```
+By default game will starts in GUI, if you want to debug and run in CLI use the ``-c`` flag like below:
+```
+python main.py -c
+```
+## How to play
+Just drag and drop a piece to move it.
 
-## User input format
+## How to give user input in CLI
 Input is taken as follows, __with__ space in between
 ```
 <starting_square> <ending square>
