@@ -87,9 +87,8 @@ class Board:
             for value in values[:upper_bound]:
                 move: PositionTuple = position + value
                 if not move.is_out_of_bounds():
-                    if self.grid[move].color == piece.color:
-                        continue
-                    legal_moves.append(move)
+                    if self.grid[move].color == const.EMPTY:
+                        legal_moves.append(move)
             values = piece.values_to_calculate_possible_captures
             for value in values:
                 move: PositionTuple = position + value
