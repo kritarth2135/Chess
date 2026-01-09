@@ -22,7 +22,7 @@ If you want to overwrite default starting position, you can import a custom boar
 ```
 python main.py "starting_fen"
 ```
-By default game will starts in GUI, if you want to debug and run in CLI use the ``-c`` flag like below:
+By default game starts in GUI, if you want to debug and run in CLI use the ``-c`` flag like below:
 ```
 python main.py -c
 ```
