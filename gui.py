@@ -52,9 +52,13 @@ def main_gui(starting_fen: str):
                         break
 
             if event.type == pygame.MOUSEBUTTONUP:
-                if dragging:
+                pos: tuple[int, int] = event.pos
+                if is_position_out_of_bounds(pos):
                     dragging = False
-                    pos: tuple[int, int] = position_to_grid_position(event.pos)
+                    all_sprites.restore(backup_sprites)
+                elif dragging:
+                    dragging = False
+                    pos = position_to_grid_position(pos)
                     all_sprites.sprites[dragged_sprite_index].rect.x = pos[0]
                     all_sprites.sprites[dragged_sprite_index].rect.y = pos[1]
 
@@ -95,8 +99,8 @@ class PieceSprite(pygame.sprite.Sprite):
         self.piece: Piece = piece
         self.image: pygame.Surface = pygame.transform.scale(piece.icon, (const.PIECE_HEIGHT, const.PIECE_HEIGHT))
         self.rect: pygame.Rect = self.image.get_rect() 
-        self.rect.x = const.X_OFFSET + (piece.position.file * const.GRID_SIZE)
-        self.rect.y = const.Y_OFFSET + (piece.position.rank * const.GRID_SIZE)
+        self.rect.x = const.X_OFFSET + (piece.position.file * const.GRID_BOX_SIZE)
+        self.rect.y = const.Y_OFFSET + (piece.position.rank * const.GRID_BOX_SIZE)
         self.rect.width = round(const.PIECE_WIDTH * 0.8) if piece.name == const.PAWN else const.PIECE_WIDTH
         self.rect.height = round(const.PIECE_HEIGHT * 0.8) if piece.name == const.PAWN else const.PIECE_HEIGHT
 
@@ -109,8 +113,8 @@ class PieceSprite(pygame.sprite.Sprite):
 class AllSprites:
     def __init__(self, board: Board) -> None:
         self.sprites: list[PieceSprite] = []
-        for rank in range(const.SIZE):
-            for file in range(const.SIZE):
+        for rank in range(const.GRID_SIZE):
+            for file in range(const.GRID_SIZE):
                 if board.grid.array[rank][file].color == const.EMPTY:
                     continue
                 self.sprites.append(PieceSprite(board.grid.array[rank][file]))
@@ -128,17 +132,26 @@ class AllSprites:
         self.sprites = sprites
 
 
+def is_position_out_of_bounds(pos: tuple[int, int]) -> bool:
+    return (
+        pos[const.X_VALUE] < const.VALID_X_LOWER_BOUND
+        or pos[const.X_VALUE] > const.VALID_X_UPPER_BOUND
+        or pos[const.Y_VALUE] < const.VALID_Y_LOWER_BOUND
+        or pos[const.Y_VALUE] > const.VALID_Y_UPPER_BOUND
+    )
+
+
 def position_to_grid_position(pos: tuple[int, int]) -> tuple[int, int]:
     grid_pos: list[int] = []
-    grid_pos.append(const.X_OFFSET + (((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE))
-    grid_pos.append(const.Y_OFFSET + (((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE) * const.GRID_SIZE))
+    grid_pos.append(const.X_OFFSET + (((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_BOX_SIZE) * const.GRID_BOX_SIZE))
+    grid_pos.append(const.Y_OFFSET + (((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_BOX_SIZE) * const.GRID_BOX_SIZE))
     return tuple(grid_pos) #type: ignore
 
 
 def position_to_positiontuple(pos: tuple[int, int]) -> PositionTuple:
     return PositionTuple((
-        ((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_SIZE),
-        ((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_SIZE)
+        ((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_BOX_SIZE),
+        ((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_BOX_SIZE)
     ))
 
 

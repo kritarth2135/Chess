@@ -40,7 +40,7 @@ class PositionTuple:
     def __str__(self) -> str:
         """Returns the PositionTuple in a readable format"""
         
-        return f"({chr(ord("A") + self.file)}{const.SIZE - self.rank})"
+        return f"({chr(ord("A") + self.file)}{const.GRID_SIZE - self.rank})"
     
     
     def in_straight_direction(self, other: PositionTuple | Any) -> bool:
@@ -59,7 +59,7 @@ class PositionTuple:
         """Takes a PositionTuple and returns true if it is out of bounds of the grid."""
 
         for index in [self.rank, self.file]:
-            if index not in range(0, const.SIZE):
+            if index not in range(0, const.GRID_SIZE):
                 return True
         return False
     

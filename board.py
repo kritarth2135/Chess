@@ -54,9 +54,9 @@ class Board:
         """Prints the Chess Board in a Visually Good manner."""
 
         print(f"{const.DIM}┌───┬───┬───┬───┬───┬───┬───┬───┬───┐{const.RESET}")
-        for rank in range(const.SIZE):
-            print(f"{const.DIM}│ {const.SIZE - rank} │ {const.RESET}", end="")
-            for file in range(const.SIZE):
+        for rank in range(const.GRID_SIZE):
+            print(f"{const.DIM}│ {const.GRID_SIZE - rank} │ {const.RESET}", end="")
+            for file in range(const.GRID_SIZE):
                 print(f"{const.BOLD}{self.grid.array[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
             print()
             print(f"{const.DIM}├───┼───┼───┼───┼───┼───┼───┼───┼───┤{const.RESET}")
@@ -189,7 +189,7 @@ class Board:
 
 class Grid:
     """
-    Create a SIZE x SIZE grid for the Chess Board.
+    Create a GRID_SIZE x GRID_SIZE grid for the Chess Board.
 
     Args:
         piece_placement: Modified piece placement data from FEN string, where numbe of spaces are replaced with Es.
@@ -201,10 +201,10 @@ class Grid:
         self.array: list[list[Piece]] = []
         self.king_position: dict[int, PositionTuple] = {}
 
-        for rank in range(const.SIZE):
+        for rank in range(const.GRID_SIZE):
             temp_list: list[Piece] = []
 
-            for file in range(const.SIZE):
+            for file in range(const.GRID_SIZE):
                 piece_notation = piece_placement[rank][file]
                 position = PositionTuple((rank, file))
                 

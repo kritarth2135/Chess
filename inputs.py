@@ -27,7 +27,7 @@ def alg_notation_to_position_tuple(alg_notation: str) -> PositionTuple:
 
     position: list[int] = []
     for i in range(len(alg_notation)):
-        position.append((ord(alg_notation[i]) - ord("a")) if i == 0 else (const.SIZE - int(alg_notation[i])))
+        position.append((ord(alg_notation[i]) - ord("a")) if i == 0 else (const.GRID_SIZE - int(alg_notation[i])))
     return PositionTuple(tuple(reversed(position))) # type: ignore
 
 

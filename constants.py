@@ -3,6 +3,9 @@ from typing import Any
 from positions import PositionTuple
 
 
+# Length of the square chess grid 
+GRID_SIZE: int = 8
+
 # Constants for GUI
 BOARD_WIDTH: int = 800
 BOARD_HEIGHT: int = 800
@@ -11,15 +14,17 @@ PIECE_HEIGHT: int = 60
 
 X_OFFSET: int = 90
 Y_OFFSET: int = 90
-GRID_SIZE: int = 80
+GRID_BOX_SIZE: int = 80
+
+VALID_X_LOWER_BOUND: int = X_OFFSET
+VALID_X_UPPER_BOUND: int = X_OFFSET + (GRID_BOX_SIZE * GRID_SIZE)
+VALID_Y_LOWER_BOUND: int = Y_OFFSET
+VALID_Y_UPPER_BOUND: int = Y_OFFSET + (GRID_BOX_SIZE * GRID_SIZE)
 
 MAX_FPS: int = 60
 
 X_VALUE: int = 0
 Y_VALUE: int = 1
-
-# Length of the square chess grid 
-SIZE: int = 8
 
 # Players
 EMPTY: int = -1
