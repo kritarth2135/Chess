@@ -24,10 +24,13 @@ def main_cli(starting_fen: str) -> None:
 
         while True:
             try:
-                input_str: str = input("Enter the move to play or 'exit' to quit: ")
+                input_str: str = input("Enter the move to play, 'exit' to quit or 'undo' to undo: ")
                 if input_str.lower() == "exit":
                     sys.exit()
-                board.move(input_str_to_movement_tuple(input_str))
+                elif input_str.lower() == "undo":
+                    board.undo()
+                else:
+                    board.move(input_str_to_movement_tuple(input_str))
             except errors.CustomException as e:
                 print(f"{const.RED}{e}{const.RESET}")
             else:

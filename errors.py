@@ -24,3 +24,7 @@ class KingStillUnderCheck(CustomException):
 class InvalidTurn(CustomException):
     def __init__(self):
         super().__init__("Invalid turn!")
+
+class NoMoreUndos(CustomException):
+    def __init__(self):
+        super().__init__("No more moves to undo!")

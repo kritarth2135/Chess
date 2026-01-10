@@ -22,7 +22,8 @@ class Board:
         en_passant_squares: A string containing all the squares on which a pawn can move to make an en passant capture.
         halfmove_count: The number of halfmoves.
         fullmove_count: The number of fullmoves.
-        captured_pieces: List of captured pieces.
+        captured_pieces: List of captured pieces including empty pieces.
+        move_history: List of MovementTuples to track previous moves.
     """
     def __init__(self, fen_string: str) -> None:
         FEN_data: dict[str, Any] | None = fen.fen_parser(fen_string)
@@ -48,6 +49,7 @@ class Board:
                 self.castling_availability[castling] = True
         
         self.captured_pieces: list[Piece] = []
+        self.move_history: list[MovementTuple] = []
     
         
     def display(self) -> None:
@@ -136,25 +138,6 @@ class Board:
                     return
 
 
-    def make_move(self, movement: MovementTuple) -> None:
-        if not isinstance(self.grid[movement.final_position], Empty):
-            self.captured_pieces.append(self.grid[movement.final_position])
-
-        self.grid[movement.final_position] = self.grid[movement.initial_position]
-        (
-            self.grid[movement.final_position].position,
-            self.grid[movement.final_position].is_moved
-        ) = movement.final_position, True
-
-        if isinstance(self.grid[movement.final_position], King):
-            self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
-
-        self.grid[movement.initial_position] = create_piece(
-            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
-            movement.initial_position
-        )
-
-    
     def move(self, movement: MovementTuple) -> None:
         """Moves the piece on movement.initial_position to movement.final_position if it is valid."""
 
@@ -184,6 +167,35 @@ class Board:
         self.halfmove_count += 1
         if self.active_color == const.BLACK:
             self.fullmove_count += 1
+
+
+    def make_move(self, movement: MovementTuple) -> None:
+        self.captured_pieces.append(self.grid[movement.final_position])
+
+        self.grid[movement.final_position] = self.grid[movement.initial_position]
+        (
+            self.grid[movement.final_position].position,
+            self.grid[movement.final_position].is_moved
+        ) = movement.final_position, True
+
+        if isinstance(self.grid[movement.final_position], King):
+            self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
+
+        self.grid[movement.initial_position] = create_piece(
+            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
+            movement.initial_position
+        )
+
+        self.move_history.append(movement)
+    
+
+    def undo(self) -> None:
+        if not self.move_history:
+            raise errors.NoMoreUndos
+        movement: MovementTuple = self.move_history.pop()
+
+        self.grid[movement.initial_position] = self.grid[movement.final_position]
+        self.grid[movement.final_position] = self.captured_pieces.pop()
 
 
 
