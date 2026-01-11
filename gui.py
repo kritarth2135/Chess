@@ -101,8 +101,8 @@ class PieceSprite(pygame.sprite.Sprite):
         self.rect: pygame.Rect = self.image.get_rect() 
         self.rect.x = const.X_OFFSET + (piece.position.file * const.GRID_BOX_SIZE)
         self.rect.y = const.Y_OFFSET + (piece.position.rank * const.GRID_BOX_SIZE)
-        self.rect.width = round(const.PIECE_WIDTH * 0.8) if piece.name == const.PAWN else const.PIECE_WIDTH
-        self.rect.height = round(const.PIECE_HEIGHT * 0.8) if piece.name == const.PAWN else const.PIECE_HEIGHT
+        self.rect.width = const.PIECE_WIDTH
+        self.rect.height = const.PIECE_HEIGHT
 
     def copy(self):
         copy: PieceSprite = PieceSprite(self.piece)

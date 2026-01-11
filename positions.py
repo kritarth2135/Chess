@@ -93,3 +93,7 @@ class MovementTuple:
         """Prints the MovementTuple in a readable format."""
 
         return f"[{self.initial_position}, {self.final_position}]"
+    
+
+    def revert(self):
+        return MovementTuple((self.final_position, self.initial_position))

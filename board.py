@@ -153,23 +153,23 @@ class Board:
         if movement.final_position not in legal_moves:
             raise errors.InvalidMove
 
-        self.make_move(movement)
+        self.make_move(movement, is_undo=False)
 
         for king_position in self.grid.king_position.values():
             self.update_is_under_Check(self.grid[king_position]) #type: ignore
 
         active_players_king: King = self.grid[self.grid.king_position[self.active_color]] #type: ignore
         if active_players_king.is_under_Check:
-            self.make_move(MovementTuple((movement.final_position, movement.initial_position)))
+            self.undo()
             raise errors.KingStillUnderCheck
         
-        self.active_color = (self.active_color + 1) % 2
+        self.active_color = 1 - self.active_color
         self.halfmove_count += 1
         if self.active_color == const.BLACK:
             self.fullmove_count += 1
 
 
-    def make_move(self, movement: MovementTuple) -> None:
+    def make_move(self, movement: MovementTuple, is_undo: bool) -> None:
         self.captured_pieces.append(self.grid[movement.final_position])
 
         self.grid[movement.final_position] = self.grid[movement.initial_position]
@@ -181,21 +181,25 @@ class Board:
         if isinstance(self.grid[movement.final_position], King):
             self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
 
-        self.grid[movement.initial_position] = create_piece(
-            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
-            movement.initial_position
-        )
+        if is_undo:
+            self.grid[movement.initial_position] = self.captured_pieces.pop()
+        else:
+            self.grid[movement.initial_position] = create_piece(
+                const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
+                movement.initial_position
+            )
 
         self.move_history.append(movement)
-    
+
 
     def undo(self) -> None:
         if not self.move_history:
             raise errors.NoMoreUndos
+        
         movement: MovementTuple = self.move_history.pop()
+        self.make_move(movement.revert(), is_undo=True)
 
-        self.grid[movement.initial_position] = self.grid[movement.final_position]
-        self.grid[movement.final_position] = self.captured_pieces.pop()
+        self.active_color = 1 - self.active_color
 
 
 
