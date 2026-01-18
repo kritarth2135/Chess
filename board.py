@@ -47,11 +47,11 @@ class Board:
         for castling, castling_availability in zip(list(self.castling_availability.keys()), FEN_data["castling_availability"]):
             if int(castling_availability) == 1:
                 self.castling_availability[castling] = True
-        
+
         self.captured_pieces: list[Piece] = []
         self.move_history: list[MovementTuple] = []
-    
-        
+
+
     def display(self) -> None:
         """Prints the Chess Board in a Visually Good manner."""
 
@@ -188,8 +188,7 @@ class Board:
                 const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
                 movement.initial_position
             )
-
-        self.move_history.append(movement)
+            self.move_history.append(movement)
 
 
     def undo(self) -> None:
@@ -197,7 +196,9 @@ class Board:
             raise errors.NoMoreUndos
         
         movement: MovementTuple = self.move_history.pop()
-        self.make_move(movement.revert(), is_undo=True)
+        self.make_move(movement.invert(), is_undo=True)
+        if self.grid[movement.initial_position].position == self.grid[movement.initial_position].starting_position:
+            self.grid[movement.initial_position].is_moved = False
 
         self.active_color = 1 - self.active_color
 

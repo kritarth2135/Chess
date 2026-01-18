@@ -24,30 +24,29 @@ def main_gui(starting_fen: str):
     chess_board_rect = chess_board.get_rect()
 
     all_sprites: AllSprites = AllSprites(board)
-    backup_sprites: list[PieceSprite] = all_sprites.create_backup()
 
     running: bool = True
     dragging: bool = False
     dragged_sprite_index: int = 0
     initial_position: PositionTuple = const.SENTINAL_POSITION
     final_position: PositionTuple = const.SENTINAL_POSITION
-    
+
     while running:
         clock.tick(const.MAX_FPS)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos: tuple[int, int] = event.pos
                 for index, sprite in enumerate(all_sprites.sprites):
                     if sprite.rect.collidepoint(pos):
-                        backup_sprites = all_sprites.create_backup()
+                        all_sprites.append_backup_sprites()
                         dragging = True
                         dragged_sprite_index = index
                         sprite.rect.center = pos
-                        
+
                         initial_position = position_to_positiontuple(pos)
                         break
 
@@ -55,7 +54,7 @@ def main_gui(starting_fen: str):
                 pos: tuple[int, int] = event.pos
                 if is_position_out_of_bounds(pos):
                     dragging = False
-                    all_sprites.restore(backup_sprites)
+                    all_sprites.restore()
                 elif dragging:
                     dragging = False
                     pos = position_to_grid_position(pos)
@@ -67,7 +66,14 @@ def main_gui(starting_fen: str):
             if event.type == pygame.MOUSEMOTION:
                 if dragging:
                     all_sprites.sprites[dragged_sprite_index].rect.center = event.pos
-                    
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_u:
+                    try:
+                        all_sprites.undo(board)
+                    except errors.NoMoreUndos as e:
+                        printf(f"{const.RED}e{const.RESET}")
+
         try:
             if (not initial_position.is_out_of_bounds()) and  (not final_position.is_out_of_bounds()):
                 print(initial_position, final_position)
@@ -78,17 +84,18 @@ def main_gui(starting_fen: str):
                 for index, sprite in enumerate(all_sprites.sprites):
                     if sprite.piece in board.captured_pieces:
                         all_sprites.sprites.pop(index)
+    
+            screen.blit(pygame.transform.scale(chess_board, (const.BOARD_HEIGHT, const.BOARD_HEIGHT)), chess_board_rect)
+            for sprite in all_sprites.sprites:
+                screen.blit(sprite.image, sprite.rect)
+            pygame.display.update()
+
 
         except errors.CustomException as e:
             initial_position = const.SENTINAL_POSITION
             final_position = const.SENTINAL_POSITION
-            all_sprites.restore(backup_sprites)
+            all_sprites.restore()
             print(f"{const.RED}{e}{const.RESET}")
-
-        screen.blit(pygame.transform.scale(chess_board, (const.BOARD_HEIGHT, const.BOARD_HEIGHT)), chess_board_rect)
-        for sprite in all_sprites.sprites:
-            screen.blit(sprite.image, sprite.rect)
-        pygame.display.update()
 
     pygame.quit()
 
@@ -118,18 +125,31 @@ class AllSprites:
                 if board.grid.array[rank][file].color == const.EMPTY:
                     continue
                 self.sprites.append(PieceSprite(board.grid.array[rank][file]))
-    
+
+        self.create_backup_sprite()
+
+    def create_backup_sprite(self) -> None:
+        self.backup_sprites: list[list[PieceSprite]] = []
+        self.backup_sprites.append(self.append_backup_sprites())
+
     def add(self, sprite: PieceSprite) -> None:
         self.sprites.append(sprite)
 
-    def create_backup(self) -> list[PieceSprite]:
-        backup: list[PieceSprite] = []
+    def append_backup_sprites(self) -> list[PieceSprite]:
+        temp_backup: list[PieceSprite] = []
         for sprite in self.sprites:
-            backup.append(sprite.copy())
-        return backup
+            temp_backup.append(sprite.copy())
+        self.backup_sprites.append(temp_backup)
 
-    def restore(self, sprites: list[PieceSprite]) -> None:
-        self.sprites = sprites
+    def restore(self) -> None:
+        if self.backup_sprites:
+            self.sprites = self.backup_sprites.pop()
+
+    def undo(self, board: Board) -> None:
+        if not board.move_history or not self.backup_sprites:
+            raise errors.NoMoreUndos
+        board.undo()
+        self.restore()
 
 
 def is_position_out_of_bounds(pos: tuple[int, int]) -> bool:

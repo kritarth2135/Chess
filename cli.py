@@ -1,11 +1,11 @@
 import sys
 import os
 
-import constants as const
 from board import Board
-from inputs import input_str_to_movement_tuple
+import constants as const
 import errors
-
+from inputs import input_str_to_movement_tuple
+from positions import MovementTuple
 
 
 def main_cli(starting_fen: str) -> None:
@@ -30,7 +30,11 @@ def main_cli(starting_fen: str) -> None:
                 elif input_str.lower() == "undo":
                     board.undo()
                 else:
-                    board.move(input_str_to_movement_tuple(input_str))
+                    move: MovementTuple = input_str_to_movement_tuple(input_str)
+                    for x in board.get_legal_moves(board.grid[move.initial_position]):
+                        print(x, end=" ")
+                    print()
+                    board.move(move)
             except errors.CustomException as e:
                 print(f"{const.RED}{e}{const.RESET}")
             else:
