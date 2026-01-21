@@ -89,6 +89,7 @@ def main_gui(starting_fen: str):
             for sprite in all_sprites.sprites:
                 screen.blit(sprite.image, sprite.rect)
             pygame.display.update()
+            board.display()
 
 
         except errors.CustomException as e:

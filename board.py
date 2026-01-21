@@ -197,8 +197,10 @@ class Board:
         
         movement: MovementTuple = self.move_history.pop()
         self.make_move(movement.invert(), is_undo=True)
-        if self.grid[movement.initial_position].position == self.grid[movement.initial_position].starting_position:
-            self.grid[movement.initial_position].is_moved = False
+        
+        for piece in [self.grid[movement.initial_position], self.grid[movement.final_position]]:
+            if piece.color != const.EMPTY and piece.position == piece.starting_position:
+                piece.is_moved = False
 
         self.active_color = 1 - self.active_color
 
