@@ -59,11 +59,17 @@ class Board:
         for rank in range(const.GRID_SIZE):
             print(f"{const.DIM}│ {const.GRID_SIZE - rank} │ {const.RESET}", end="")
             for file in range(const.GRID_SIZE):
-                print(f"{const.BOLD}{self.grid.array[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
+                if isinstance(self.grid.array[rank][file], King) and self.grid.array[rank][file].is_under_Check:
+                    print(f"{const.RED}{self.grid.array[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
+                else:
+                    print(f"{self.grid.array[rank][file].symbol}", end = f"{const.DIM} │ {const.RESET}")
             print()
             print(f"{const.DIM}├───┼───┼───┼───┼───┼───┼───┼───┼───┤{const.RESET}")
         print(f"{const.DIM}│   │ A │ B │ C │ D │ E │ F │ G │ H │{const.RESET}")
         print(f"{const.DIM}└───┴───┴───┴───┴───┴───┴───┴───┴───┘{const.RESET}")
+        
+        for pieces in self.captured_pieces:
+            print(pieces.name)
 
 
     def get_legal_moves(self, piece: Piece) -> list[PositionTuple]:
@@ -153,12 +159,12 @@ class Board:
         if movement.final_position not in legal_moves:
             raise errors.InvalidMove
 
-        self.make_move(movement, is_undo=False)
+        self.make_move(movement)
 
         for king_position in self.grid.king_position.values():
-            self.update_is_under_Check(self.grid[king_position]) #type: ignore
+            self.update_is_under_Check(king_position)
 
-        active_players_king: King = self.grid[self.grid.king_position[self.active_color]] #type: ignore
+        active_players_king: King = self.grid.king_position[self.active_color] #type: ignore
         if active_players_king.is_under_Check:
             self.undo()
             raise errors.KingStillUnderCheck
@@ -169,7 +175,7 @@ class Board:
             self.fullmove_count += 1
 
 
-    def make_move(self, movement: MovementTuple, is_undo: bool) -> None:
+    def make_move(self, movement: MovementTuple) -> None:
         self.captured_pieces.append(self.grid[movement.final_position])
 
         self.grid[movement.final_position] = self.grid[movement.initial_position]
@@ -178,31 +184,39 @@ class Board:
             self.grid[movement.final_position].is_moved
         ) = movement.final_position, True
 
-        if isinstance(self.grid[movement.final_position], King):
-            self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
+        #if isinstance(self.grid[movement.final_position], King):
+        #    self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
 
-        if is_undo:
-            self.grid[movement.initial_position] = self.captured_pieces.pop()
-        else:
-            self.grid[movement.initial_position] = create_piece(
-                const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
-                movement.initial_position
-            )
-            self.move_history.append(movement)
+        self.grid[movement.initial_position] = create_piece(
+            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
+            movement.initial_position
+        )
+
+        self.move_history.append(movement)
 
 
     def undo(self) -> None:
         if not self.move_history:
             raise errors.NoMoreUndos
-        
+
         movement: MovementTuple = self.move_history.pop()
-        self.make_move(movement.invert(), is_undo=True)
         
-        for piece in [self.grid[movement.initial_position], self.grid[movement.final_position]]:
-            if piece.color != const.EMPTY and piece.position == piece.starting_position:
-                piece.is_moved = False
+        self.grid[movement.initial_position] = self.grid[movement.final_position]
+        piece: Piece = self.grid[movement.initial_position]
+        piece.position = movement.initial_position
+
+        if isinstance(piece, Pawn) and piece.position in piece.initial_positions:
+            piece.is_moved = False
+
+        self.grid[movement.final_position] = self.captured_pieces.pop()
+
+        for king_position in self.grid.king_position.values():
+            self.update_is_under_Check(king_position)
 
         self.active_color = 1 - self.active_color
+        self.halfmove_count -= 1
+        if self.active_color == const.BLACK:
+            self.fullmove_count -= 1
 
 
 
@@ -218,7 +232,7 @@ class Grid:
     """
     def __init__(self, piece_placement: list[list[str]]) -> None:
         self.array: list[list[Piece]] = []
-        self.king_position: dict[int, PositionTuple] = {}
+        self.king_position: dict[int, King] = {}
 
         for rank in range(const.GRID_SIZE):
             temp_list: list[Piece] = []
@@ -229,7 +243,7 @@ class Grid:
                 
                 temp_piece: Piece = create_piece(piece_notation, position)
                 if isinstance(temp_piece, King):
-                    self.king_position[temp_piece.color] = temp_piece.position
+                    self.king_position[temp_piece.color] = temp_piece
                 temp_list.append(temp_piece)
 
             self.array.append(temp_list)
