@@ -164,15 +164,15 @@ class Board:
         for king_position in self.grid.king_position.values():
             self.update_is_under_Check(king_position)
 
-        active_players_king: King = self.grid.king_position[self.active_color] #type: ignore
-        if active_players_king.is_under_Check:
-            self.undo()
-            raise errors.KingStillUnderCheck
-        
         self.active_color = 1 - self.active_color
         self.halfmove_count += 1
         if self.active_color == const.BLACK:
             self.fullmove_count += 1
+
+        active_players_king: King = self.grid.king_position[1 - self.active_color] #type: ignore
+        if active_players_king.is_under_Check:
+            self.undo()
+            raise errors.KingStillUnderCheck
 
 
     def make_move(self, movement: MovementTuple) -> None:

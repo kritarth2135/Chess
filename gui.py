@@ -23,6 +23,10 @@ def main_gui(starting_fen: str):
     chess_board.convert()
     chess_board_rect = chess_board.get_rect()
 
+    check_background: pygame.Surface = pygame.image.load("assets/check_background.png")
+    check_background.convert()
+    check_background = pygame.transform.scale(check_background, (const.PIECE_HEIGHT, const.PIECE_WIDTH))
+
     all_sprites: AllSprites = AllSprites(board)
 
     running: bool = True
@@ -72,7 +76,7 @@ def main_gui(starting_fen: str):
                     try:
                         all_sprites.undo(board)
                     except errors.NoMoreUndos as e:
-                        printf(f"{const.RED}e{const.RESET}")
+                        print(f"{const.RED}{e}{const.RESET}")
 
         try:
             if (not initial_position.is_out_of_bounds()) and  (not final_position.is_out_of_bounds()):
@@ -88,8 +92,9 @@ def main_gui(starting_fen: str):
             screen.blit(pygame.transform.scale(chess_board, (const.BOARD_HEIGHT, const.BOARD_HEIGHT)), chess_board_rect)
             for sprite in all_sprites.sprites:
                 screen.blit(sprite.image, sprite.rect)
+                if sprite.piece.name == const.KING and sprite.piece.is_under_Check:
+                    screen.blit(check_background, sprite.rect)
             pygame.display.update()
-            board.display()
 
 
         except errors.CustomException as e:
