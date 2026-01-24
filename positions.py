@@ -15,6 +15,7 @@ class PositionTuple:
     Attributes:
         rank: Index of the rank from top of the grid.
         file: Index of the file from left of the grid.
+        position: Tuple of integer in form of (rank, file).
     """
 
     def __init__(self, position: tuple[int, int]) -> None:
@@ -93,3 +94,7 @@ class MovementTuple:
         """Prints the MovementTuple in a readable format."""
 
         return f"[{self.initial_position}, {self.final_position}]"
+    
+
+    def invert(self):
+        return MovementTuple((self.final_position, self.initial_position))

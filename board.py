@@ -22,8 +22,10 @@ class Board:
         en_passant_squares: A string containing all the squares on which a pawn can move to make an en passant capture.
         halfmove_count: The number of halfmoves.
         fullmove_count: The number of fullmoves.
-        captured_pieces: List of captured pieces.
+        captured_pieces: List of captured pieces including empty pieces.
+        move_history: List of MovementTuples to track previous moves.
     """
+
     def __init__(self, fen_string: str) -> None:
         FEN_data: dict[str, Any] | None = fen.fen_parser(fen_string)
         if not FEN_data:
@@ -46,10 +48,11 @@ class Board:
         for castling, castling_availability in zip(list(self.castling_availability.keys()), FEN_data["castling_availability"]):
             if int(castling_availability) == 1:
                 self.castling_availability[castling] = True
-        
+
         self.captured_pieces: list[Piece] = []
-    
-        
+        self.move_history: list[MovementTuple] = []
+
+
     def display(self) -> None:
         """Prints the Chess Board in a Visually Good manner."""
 
@@ -57,14 +60,22 @@ class Board:
         for rank in range(const.GRID_SIZE):
             print(f"{const.DIM}│ {const.GRID_SIZE - rank} │ {const.RESET}", end="")
             for file in range(const.GRID_SIZE):
-                print(f"{const.BOLD}{self.grid.array[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
+                if isinstance(self.grid.array[rank][file], King) and self.grid.array[rank][file].is_under_Check:
+                    print(f"{const.RED}{self.grid.array[rank][file].symbol}{const.RESET}", end = f"{const.DIM} │ {const.RESET}")
+                else:
+                    print(f"{self.grid.array[rank][file].symbol}", end = f"{const.DIM} │ {const.RESET}")
             print()
             print(f"{const.DIM}├───┼───┼───┼───┼───┼───┼───┼───┼───┤{const.RESET}")
         print(f"{const.DIM}│   │ A │ B │ C │ D │ E │ F │ G │ H │{const.RESET}")
         print(f"{const.DIM}└───┴───┴───┴───┴───┴───┴───┴───┴───┘{const.RESET}")
+        
+        for pieces in self.captured_pieces:
+            print(pieces.name)
 
 
     def get_legal_moves(self, piece: Piece) -> list[PositionTuple]:
+        """Get all the legal moves of piece."""
+
         legal_moves: list[PositionTuple] = []
         position: PositionTuple = piece.position
         
@@ -136,25 +147,6 @@ class Board:
                     return
 
 
-    def make_move(self, movement: MovementTuple) -> None:
-        if not isinstance(self.grid[movement.final_position], Empty):
-            self.captured_pieces.append(self.grid[movement.final_position])
-
-        self.grid[movement.final_position] = self.grid[movement.initial_position]
-        (
-            self.grid[movement.final_position].position,
-            self.grid[movement.final_position].is_moved
-        ) = movement.final_position, True
-
-        if isinstance(self.grid[movement.final_position], King):
-            self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
-
-        self.grid[movement.initial_position] = create_piece(
-            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
-            movement.initial_position
-        )
-
-    
     def move(self, movement: MovementTuple) -> None:
         """Moves the piece on movement.initial_position to movement.final_position if it is valid."""
 
@@ -173,17 +165,62 @@ class Board:
         self.make_move(movement)
 
         for king_position in self.grid.king_position.values():
-            self.update_is_under_Check(self.grid[king_position]) #type: ignore
+            self.update_is_under_Check(king_position)
 
-        active_players_king: King = self.grid[self.grid.king_position[self.active_color]] #type: ignore
-        if active_players_king.is_under_Check:
-            self.make_move(MovementTuple((movement.final_position, movement.initial_position)))
-            raise errors.KingStillUnderCheck
-        
-        self.active_color = (self.active_color + 1) % 2
+        self.active_color = 1 - self.active_color
         self.halfmove_count += 1
         if self.active_color == const.BLACK:
             self.fullmove_count += 1
+
+        active_players_king: King = self.grid.king_position[1 - self.active_color] #type: ignore
+        if active_players_king.is_under_Check:
+            self.undo()
+            raise errors.KingStillUnderCheck
+
+
+    def make_move(self, movement: MovementTuple) -> None:
+        """Function used by move to update all required values to make a move."""
+
+        self.captured_pieces.append(self.grid[movement.final_position])
+
+        self.grid[movement.final_position] = self.grid[movement.initial_position]
+        (
+            self.grid[movement.final_position].position,
+            self.grid[movement.final_position].is_moved
+        ) = movement.final_position, True
+
+        self.grid[movement.initial_position] = create_piece(
+            const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
+            movement.initial_position
+        )
+
+        self.move_history.append(movement)
+
+
+    def undo(self) -> None:
+        """Undo's the most recent move"""
+
+        if not self.move_history:
+            raise errors.NoMoreUndos
+
+        movement: MovementTuple = self.move_history.pop()
+        
+        self.grid[movement.initial_position] = self.grid[movement.final_position]
+        piece: Piece = self.grid[movement.initial_position]
+        piece.position = movement.initial_position
+
+        if isinstance(piece, Pawn) and piece.position in piece.initial_positions:
+            piece.is_moved = False
+
+        self.grid[movement.final_position] = self.captured_pieces.pop()
+
+        for king_position in self.grid.king_position.values():
+            self.update_is_under_Check(king_position)
+
+        self.active_color = 1 - self.active_color
+        self.halfmove_count -= 1
+        if self.active_color == const.BLACK:
+            self.fullmove_count -= 1
 
 
 
@@ -195,11 +232,12 @@ class Grid:
         piece_placement: Modified piece placement data from FEN string, where numbe of spaces are replaced with Es.
     
     Attributes:
-        grid: A 2D list of Piece showing the state of the Chess Board.
+        array: A 2D list of Piece showing the state of the Chess Board.
+        king_position: A dictionary to keep track of both the player's Kings.
     """
     def __init__(self, piece_placement: list[list[str]]) -> None:
         self.array: list[list[Piece]] = []
-        self.king_position: dict[int, PositionTuple] = {}
+        self.king_position: dict[int, King] = {}
 
         for rank in range(const.GRID_SIZE):
             temp_list: list[Piece] = []
@@ -210,7 +248,7 @@ class Grid:
                 
                 temp_piece: Piece = create_piece(piece_notation, position)
                 if isinstance(temp_piece, King):
-                    self.king_position[temp_piece.color] = temp_piece.position
+                    self.king_position[temp_piece.color] = temp_piece
                 temp_list.append(temp_piece)
 
             self.array.append(temp_list)

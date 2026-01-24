@@ -128,6 +128,7 @@ symbol_notation_and_material: dict[str, Any] = {
 DEFAULT_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 NUMBER_OF_FEN_COMPONENTS: int = 6
 
+# CLI constants
 DIM: str = "\033[2m"
 BOLD: str = "\033[1m"
 RED: str = "\033[31m"

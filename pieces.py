@@ -20,6 +20,7 @@ class Piece:
         color: The color of the piece.
         position: PositionTuple representing the position of the piece on the Board.
         can_slide: It indicates that if a piece can move in a sliding fashion (Queen, Rook, Bishop) or not (King, Knight, Pawn).
+        icon: pygame surface for the Piece's icon.
     """
 
     def __init__(self, color: int, position: PositionTuple) -> None:
@@ -29,8 +30,6 @@ class Piece:
         self.color: int = color
         self.position: PositionTuple = position
         self.can_slide: bool
-        self.directions_to_get_possible_moves: list[str]
-        self.values_to_calculate_possible_moves: list[PositionTuple]
         self.icon: pygame.Surface
 
 
@@ -157,6 +156,12 @@ class Pawn(Piece):
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(color, position)
         self.symbol = const.symbol_notation_and_material[const.SYMBOL][color][Pawn.name]
+
+        self.initial_positions: list[PositionTuple] = []
+        for file in range(const.GRID_SIZE):
+            rank: int = 6 if color == const.WHITE else 1
+            self.initial_positions.append(PositionTuple((rank, file)))
+
         self.values_to_calculate_possible_moves: list[PositionTuple] = [
             PositionTuple((-1, 0)),
             PositionTuple((-2, 0))
@@ -164,6 +169,7 @@ class Pawn(Piece):
             PositionTuple((1, 0)),
             PositionTuple((2, 0))
         ]
+
         self.values_to_calculate_possible_captures: list[PositionTuple] = [
             PositionTuple((-1, 1)),
             PositionTuple((-1, -1))
@@ -171,6 +177,7 @@ class Pawn(Piece):
             PositionTuple((1, 1)),
             PositionTuple((1, -1))
         ]
+
         self.icon = pygame.image.load("assets/pawn_white.png") if color == const.WHITE else pygame.image.load("assets/pawn_black.png")
 
 

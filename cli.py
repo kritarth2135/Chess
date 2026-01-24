@@ -1,14 +1,16 @@
 import sys
 import os
 
-import constants as const
 from board import Board
-from inputs import input_str_to_movement_tuple
+import constants as const
 import errors
-
+from inputs import input_str_to_movement_tuple
+from positions import MovementTuple
 
 
 def main_cli(starting_fen: str) -> None:
+    """Runs the game in CLI interface."""
+
     try:
         board = Board(starting_fen)
     except errors.InvalidFEN:
@@ -19,15 +21,16 @@ def main_cli(starting_fen: str) -> None:
         # clear_screen()
         board.display()
 
-        if board.grid[board.grid.king_position[board.active_color]].is_under_Check: #type: ignore
-            print(f"{const.RED}Your king is under Check!{const.RESET}")
-
         while True:
             try:
-                input_str: str = input("Enter the move to play or 'exit' to quit: ")
+                input_str: str = input("Enter the move to play, 'exit' to quit or 'undo'/'u' to undo: ")
                 if input_str.lower() == "exit":
                     sys.exit()
-                board.move(input_str_to_movement_tuple(input_str))
+                elif input_str.lower() == "u" or input_str.lower() == "undo":
+                    board.undo()
+                else:
+                    board.move(input_str_to_movement_tuple(input_str))
+
             except errors.CustomException as e:
                 print(f"{const.RED}{e}{const.RESET}")
             else:
