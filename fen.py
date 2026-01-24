@@ -35,7 +35,7 @@ def fen_parser(fen_string: str) -> dict[str, Any] | None:
 
 
 def modified_FEN_string_validator(modified_FEN: str) -> bool:
-    '''Takes modified FEN as input and returns True if it is valid.'''
+    """Takes modified FEN as input and returns True if it is valid."""
 
     modified_FEN_regex: str = r"([kqrbnpKQRBNPE]{8}\/){7}[kqrbnpKQRBNPE]{8}\s[wb]\s[01]{4}\s(.*)"
     return bool(re.fullmatch(modified_FEN_regex, modified_FEN))

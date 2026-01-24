@@ -20,6 +20,7 @@ class Piece:
         color: The color of the piece.
         position: PositionTuple representing the position of the piece on the Board.
         can_slide: It indicates that if a piece can move in a sliding fashion (Queen, Rook, Bishop) or not (King, Knight, Pawn).
+        icon: pygame surface for the Piece's icon.
     """
 
     def __init__(self, color: int, position: PositionTuple) -> None:

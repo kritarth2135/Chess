@@ -8,6 +8,8 @@ from positions import PositionTuple, MovementTuple
 import errors
 
 def main_gui(starting_fen: str):
+    """Runs game in GUI using pygame."""
+
     try:
         board = Board(starting_fen)
     except errors.InvalidFEN:
@@ -91,7 +93,7 @@ def main_gui(starting_fen: str):
     
             screen.blit(pygame.transform.scale(chess_board, (const.BOARD_HEIGHT, const.BOARD_HEIGHT)), chess_board_rect)
             for sprite in all_sprites.sprites:
-                screen.blit(sprite.image, sprite.rect)
+                screen.blit(sprite.icon, sprite.rect)
                 if sprite.piece.name == const.KING and sprite.piece.is_under_Check:
                     screen.blit(check_background, sprite.rect)
             pygame.display.update()
@@ -107,10 +109,22 @@ def main_gui(starting_fen: str):
 
 
 class PieceSprite(pygame.sprite.Sprite):
+    """
+    Class to generate a sprite for each piece.
+
+    Args:
+        piece: The Piece for which the sprite is to be made.
+
+    Attributes:
+        piece
+        image: Pygame surface for the icon of the piece.
+        rect: Pygame rect for the image.
+    """
+
     def __init__(self, piece: Piece) -> None:
         super().__init__()
         self.piece: Piece = piece
-        self.image: pygame.Surface = pygame.transform.scale(piece.icon, (const.PIECE_HEIGHT, const.PIECE_HEIGHT))
+        self.icon: pygame.Surface = pygame.transform.scale(piece.icon, (const.PIECE_HEIGHT, const.PIECE_HEIGHT))
         self.rect: pygame.Rect = self.image.get_rect() 
         self.rect.x = const.X_OFFSET + (piece.position.file * const.GRID_BOX_SIZE)
         self.rect.y = const.Y_OFFSET + (piece.position.rank * const.GRID_BOX_SIZE)
@@ -118,12 +132,25 @@ class PieceSprite(pygame.sprite.Sprite):
         self.rect.height = const.PIECE_HEIGHT
 
     def copy(self):
+        """Create a deepcopy of PieceSprite."""
+
         copy: PieceSprite = PieceSprite(self.piece)
         copy.rect = self.rect.copy()
         return copy
 
 
 class AllSprites:
+    """
+    Class to keep track of all the sprites (pieces) on the board.
+
+    Args:
+        board: The Board for which it is to be initialised.
+
+    Attributes:
+        sprites: A list of PieceSprite of all pieces on the board.
+        backup_sprites: A list of 'sprites' for restoring the board in case of illegal move.
+    """
+
     def __init__(self, board: Board) -> None:
         self.sprites: list[PieceSprite] = []
         for rank in range(const.GRID_SIZE):
@@ -135,23 +162,28 @@ class AllSprites:
         self.create_backup_sprite()
 
     def create_backup_sprite(self) -> None:
+        """Creates a backup of sprites list."""
+
         self.backup_sprites: list[list[PieceSprite]] = []
         self.backup_sprites.append(self.append_backup_sprites())
 
-    def add(self, sprite: PieceSprite) -> None:
-        self.sprites.append(sprite)
-
     def append_backup_sprites(self) -> list[PieceSprite]:
+        """Creates a deepcopy of sprites and appends it to backup_sprites"""
+
         temp_backup: list[PieceSprite] = []
         for sprite in self.sprites:
             temp_backup.append(sprite.copy())
         self.backup_sprites.append(temp_backup)
 
     def restore(self) -> None:
+        """Restores all the sprites to the latest backup."""
+
         if self.backup_sprites:
             self.sprites = self.backup_sprites.pop()
 
     def undo(self, board: Board) -> None:
+        """Undo's the latest move."""
+
         if not board.move_history or not self.backup_sprites:
             raise errors.NoMoreUndos
         board.undo()
@@ -159,6 +191,8 @@ class AllSprites:
 
 
 def is_position_out_of_bounds(pos: tuple[int, int]) -> bool:
+    """Returns True if position of pixel is out of the board's grid."""
+
     return (
         pos[const.X_VALUE] < const.VALID_X_LOWER_BOUND
         or pos[const.X_VALUE] > const.VALID_X_UPPER_BOUND
@@ -168,6 +202,8 @@ def is_position_out_of_bounds(pos: tuple[int, int]) -> bool:
 
 
 def position_to_grid_position(pos: tuple[int, int]) -> tuple[int, int]:
+    """Converts position of pixel to position of first pixel of corresponding grid box for snapping pieces to grid."""
+
     grid_pos: list[int] = []
     grid_pos.append(const.X_OFFSET + (((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_BOX_SIZE) * const.GRID_BOX_SIZE))
     grid_pos.append(const.Y_OFFSET + (((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_BOX_SIZE) * const.GRID_BOX_SIZE))
@@ -175,6 +211,8 @@ def position_to_grid_position(pos: tuple[int, int]) -> tuple[int, int]:
 
 
 def position_to_positiontuple(pos: tuple[int, int]) -> PositionTuple:
+    """Converts position of pixel on the board to corresponding PositionTuple."""
+
     return PositionTuple((
         ((pos[const.Y_VALUE] - const.Y_OFFSET) // const.GRID_BOX_SIZE),
         ((pos[const.X_VALUE] - const.X_OFFSET) // const.GRID_BOX_SIZE)

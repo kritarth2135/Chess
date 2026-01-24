@@ -25,6 +25,7 @@ class Board:
         captured_pieces: List of captured pieces including empty pieces.
         move_history: List of MovementTuples to track previous moves.
     """
+
     def __init__(self, fen_string: str) -> None:
         FEN_data: dict[str, Any] | None = fen.fen_parser(fen_string)
         if not FEN_data:
@@ -73,6 +74,8 @@ class Board:
 
 
     def get_legal_moves(self, piece: Piece) -> list[PositionTuple]:
+        """Get all the legal moves of piece."""
+
         legal_moves: list[PositionTuple] = []
         position: PositionTuple = piece.position
         
@@ -176,6 +179,8 @@ class Board:
 
 
     def make_move(self, movement: MovementTuple) -> None:
+        """Function used by move to update all required values to make a move."""
+
         self.captured_pieces.append(self.grid[movement.final_position])
 
         self.grid[movement.final_position] = self.grid[movement.initial_position]
@@ -183,9 +188,6 @@ class Board:
             self.grid[movement.final_position].position,
             self.grid[movement.final_position].is_moved
         ) = movement.final_position, True
-
-        #if isinstance(self.grid[movement.final_position], King):
-        #    self.grid.king_position[self.grid[movement.final_position].color] = movement.final_position
 
         self.grid[movement.initial_position] = create_piece(
             const.symbol_notation_and_material[const.NOTATION][const.EMPTY][const.EMPTY_STR],
@@ -196,6 +198,8 @@ class Board:
 
 
     def undo(self) -> None:
+        """Undo's the most recent move"""
+
         if not self.move_history:
             raise errors.NoMoreUndos
 
@@ -228,7 +232,8 @@ class Grid:
         piece_placement: Modified piece placement data from FEN string, where numbe of spaces are replaced with Es.
     
     Attributes:
-        grid: A 2D list of Piece showing the state of the Chess Board.
+        array: A 2D list of Piece showing the state of the Chess Board.
+        king_position: A dictionary to keep track of both the player's Kings.
     """
     def __init__(self, piece_placement: list[list[str]]) -> None:
         self.array: list[list[Piece]] = []
