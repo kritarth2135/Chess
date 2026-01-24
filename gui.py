@@ -125,7 +125,7 @@ class PieceSprite(pygame.sprite.Sprite):
         super().__init__()
         self.piece: Piece = piece
         self.icon: pygame.Surface = pygame.transform.scale(piece.icon, (const.PIECE_HEIGHT, const.PIECE_HEIGHT))
-        self.rect: pygame.Rect = self.image.get_rect() 
+        self.rect: pygame.Rect = self.icon.get_rect() 
         self.rect.x = const.X_OFFSET + (piece.position.file * const.GRID_BOX_SIZE)
         self.rect.y = const.Y_OFFSET + (piece.position.rank * const.GRID_BOX_SIZE)
         self.rect.width = const.PIECE_WIDTH
