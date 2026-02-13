@@ -70,6 +70,8 @@ EMPTY_STR: str = "Empty"
 NOTATION: str = "notation"
 SYMBOL: str = "symbol"
 MATERIAL: str = "material"
+CAPTURES: str = "captures"
+MOVES: str = "moves"
 
 symbol_notation_and_material: dict[str, Any] = {
     SYMBOL: [

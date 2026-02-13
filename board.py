@@ -78,7 +78,7 @@ class Board:
 
         legal_moves: list[PositionTuple] = []
         position: PositionTuple = piece.position
-        
+
         if piece.can_slide:
             directions: list[str] = piece.directions_to_get_possible_moves
 
