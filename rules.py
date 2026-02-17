@@ -3,20 +3,16 @@ from positions import PositionTuple
 
 
 class Rules:
-    pass
+    SLIDERS: list[str] = [const.QUEEN, const.ROOK, const.BISHOP]
+    NON_SLIDERS: list[str] = [const.KING, const.KNIGHT, const.PAWN]
 
-
-class MovementRules(Rules):
-    sliders: list[str] = [const.QUEEN, const.ROOK, const.BISHOP]
-    non_sliders: list[str] = [const.KING, const.KNIGHT, const.PAWN]
-
-    moving_directions: dict[str, str] = {
+    MOVING_DIRECTIONS: dict[str, str] = {
         const.QUEEN: const.ALL_DIRECTIONS,
         const.ROOK: const.STRAIGHT_DIRECTIONS,
         cosnt.BISHOP: const.DIAGONAL_DIRECTIONS
     }
 
-    moving_offsets: dict[str, list[PositionTuple]] = {
+    MOVING_OFFSETS: dict[str, list[PositionTuple]] = {
         const.KING: [
             PositionTuple((1, 0)),
             PositionTuple((-1, 0)),
@@ -43,18 +39,7 @@ class MovementRules(Rules):
         ]
     }
 
-
-class AttackRules(Rules):
-    sliders: list[str] = [const.QUEEN, const.ROOK, const.BISHOP]
-    non_sliders: list[str] = [const.KING, const.KNIGHT, const.PAWN]
-
-    attacking_directions: dict[str, str] = {
-        const.QUEEN: const.ALL_DIRECTIONS,
-        const.ROOK: const.STRAIGHT_DIRECTIONS,
-        cosnt.BISHOP: const.DIAGONAL_DIRECTIONS
-    }
-
-    attacking_offsets: dict[str, list[PositionTuple]] = {
+    ATTACKING_OFFSETS: dict[str, list[PositionTuple]] = {
         const.KING: [
             PositionTuple((1, 0)),
             PositionTuple((-1, 0)),
@@ -80,3 +65,5 @@ class AttackRules(Rules):
             PositionTuple((1, -1))
         ]
     }
+
+
