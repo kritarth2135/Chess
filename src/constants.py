@@ -1,0 +1,137 @@
+from typing import Any
+
+from positions import PositionTuple
+
+
+# Length of the square chess grid 
+GRID_SIZE: int = 8
+
+# GUI
+BOARD_WIDTH: int = 800
+BOARD_HEIGHT: int = 800
+PIECE_WIDTH: int = 60
+PIECE_HEIGHT: int = 60
+
+X_OFFSET: int = 90
+Y_OFFSET: int = 90
+GRID_BOX_SIZE: int = 80
+
+VALID_X_LOWER_BOUND: int = X_OFFSET
+VALID_X_UPPER_BOUND: int = X_OFFSET + (GRID_BOX_SIZE * GRID_SIZE)
+VALID_Y_LOWER_BOUND: int = Y_OFFSET
+VALID_Y_UPPER_BOUND: int = Y_OFFSET + (GRID_BOX_SIZE * GRID_SIZE)
+
+MAX_FPS: int = 60
+
+X_VALUE: int = 0
+Y_VALUE: int = 1
+
+# Players
+EMPTY: int = -1
+WHITE: int = 0
+BLACK: int = 1
+
+# Direction names
+UP: str = "up"
+DOWN: str = "down"
+LEFT: str = "left"
+RIGHT: str = "right"
+UP_LEFT: str = "up_left"
+UP_RIGHT: str = "up_right"
+DOWN_LEFT: str = "down_left"
+DOWN_RIGHT: str = "down_right"
+
+# Relative directions
+RELATIVE_DIRECTIONS: dict[str, PositionTuple] = {
+    UP: PositionTuple((-1, 0)),
+    DOWN: PositionTuple((1, 0)),
+    LEFT: PositionTuple((0, -1)),
+    RIGHT: PositionTuple((0, 1)),
+    UP_LEFT: PositionTuple((-1, -1)),
+    UP_RIGHT: PositionTuple((-1, 1)),
+    DOWN_LEFT: PositionTuple((1, -1)),
+    DOWN_RIGHT: PositionTuple((1, 1))
+}
+
+# Group of directions
+STRAIGHT_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT]
+DIAGONAL_DIRECTIONS: list[str] = [UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
+ALL_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
+
+# Piece names
+KING: str = "King"
+QUEEN: str = "Queen"
+ROOK: str = "Rook"
+BISHOP: str = "Bishop"
+KNIGHT: str = "Knight"
+PAWN: str = "Pawn"
+EMPTY_STR: str = "Empty"
+
+CAPTURES: str = "captures"
+MOVES: str = "moves"
+
+SYMBOL: [
+    {   # White (0)
+        KING: "♔",
+        QUEEN: "♕",
+        ROOK: "♖",
+        BISHOP: "♗",
+        KNIGHT: "♘",
+        PAWN: "♙"
+    },
+    {   # Black (1)
+        KING: "♚",
+        QUEEN: "♛",
+        ROOK: "♜",
+        BISHOP: "♝",
+        KNIGHT: "♞",
+        PAWN: "♟"
+    },
+    {   # Empty (-1)
+        EMPTY_STR: " "   # Unicode U+2001
+    }
+]
+
+NOTATION: [
+    {   # White (0)
+        KING: "K",
+        QUEEN: "Q",
+        ROOK: "R",
+        BISHOP: "B",
+        KNIGHT: "N",
+        PAWN: "P"
+    },
+    {   # Black (1)
+        KING: "k",
+        QUEEN: "q",
+        ROOK: "r",
+        BISHOP: "b",
+        KNIGHT: "n",
+        PAWN: "p"
+    },
+    {   # Empty (-1)
+        EMPTY_STR: "E"
+    }
+]
+
+MATERIAL: {
+    KING: float("inf"),
+    QUEEN: 9,
+    ROOK: 5,
+    BISHOP: 3,
+    KNIGHT: 3,
+    PAWN: 1,
+    EMPTY_STR: 0
+}
+
+# FEN
+DEFAULT_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+NUMBER_OF_FEN_COMPONENTS: int = 6
+
+# CLI
+DIM: str = "\033[2m"
+BOLD: str = "\033[1m"
+RED: str = "\033[31m"
+RESET: str = "\033[0m"
+
+SENTINAL_POSITION: PositionTuple = PositionTuple((-1, -1))
