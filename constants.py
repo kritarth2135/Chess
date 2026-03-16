@@ -6,7 +6,7 @@ from positions import PositionTuple
 # Length of the square chess grid 
 GRID_SIZE: int = 8
 
-# Constants for GUI
+# GUI
 BOARD_WIDTH: int = 800
 BOARD_HEIGHT: int = 800
 PIECE_WIDTH: int = 60
@@ -31,7 +31,7 @@ EMPTY: int = -1
 WHITE: int = 0
 BLACK: int = 1
 
-# Constants for direction names
+# Direction names
 UP: str = "up"
 DOWN: str = "down"
 LEFT: str = "left"
@@ -41,8 +41,8 @@ UP_RIGHT: str = "up_right"
 DOWN_LEFT: str = "down_left"
 DOWN_RIGHT: str = "down_right"
 
-# Constants for calculating directions
-values_for_relative_position: dict[str, PositionTuple] = {
+# Relative directions
+RELATIVE_DIRECTIONS: dict[str, PositionTuple] = {
     UP: PositionTuple((-1, 0)),
     DOWN: PositionTuple((1, 0)),
     LEFT: PositionTuple((0, -1)),
@@ -53,12 +53,12 @@ values_for_relative_position: dict[str, PositionTuple] = {
     DOWN_RIGHT: PositionTuple((1, 1))
 }
 
-# Constants for group of directions
+# Group of directions
 STRAIGHT_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT]
 DIAGONAL_DIRECTIONS: list[str] = [UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
 ALL_DIRECTIONS: list[str] = [UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT]
 
-# Pieces names
+# Piece names
 KING: str = "King"
 QUEEN: str = "Queen"
 ROOK: str = "Rook"
@@ -67,70 +67,68 @@ KNIGHT: str = "Knight"
 PAWN: str = "Pawn"
 EMPTY_STR: str = "Empty"
 
-NOTATION: str = "notation"
-SYMBOL: str = "symbol"
-MATERIAL: str = "material"
 CAPTURES: str = "captures"
 MOVES: str = "moves"
 
-symbol_notation_and_material: dict[str, Any] = {
-    SYMBOL: [
-        {   # White (0)
-            KING: "♔",
-            QUEEN: "♕",
-            ROOK: "♖",
-            BISHOP: "♗",
-            KNIGHT: "♘",
-            PAWN: "♙"
-        },
-        {   # Black (1)
-            KING: "♚",
-            QUEEN: "♛",
-            ROOK: "♜",
-            BISHOP: "♝",
-            KNIGHT: "♞",
-            PAWN: "♟"
-        },
-        {   # Empty (-1)
-            EMPTY_STR: " "   # Unicode U+2001
-        }
-    ],
-    NOTATION: [
-        {   # White (0)
-            KING: "K",
-            QUEEN: "Q",
-            ROOK: "R",
-            BISHOP: "B",
-            KNIGHT: "N",
-            PAWN: "P"
-        },
-        {   # Black (1)
-            KING: "k",
-            QUEEN: "q",
-            ROOK: "r",
-            BISHOP: "b",
-            KNIGHT: "n",
-            PAWN: "p"
-        },
-        {   # Empty (-1)
-            EMPTY_STR: "E"
-        }
-    ],
-    MATERIAL: {
-        KING: float("inf"),
-        QUEEN: 9,
-        ROOK: 5,
-        BISHOP: 3,
-        KNIGHT: 3,
-        PAWN: 1,
-        EMPTY_STR: 0
+SYMBOL: [
+    {   # White (0)
+        KING: "♔",
+        QUEEN: "♕",
+        ROOK: "♖",
+        BISHOP: "♗",
+        KNIGHT: "♘",
+        PAWN: "♙"
+    },
+    {   # Black (1)
+        KING: "♚",
+        QUEEN: "♛",
+        ROOK: "♜",
+        BISHOP: "♝",
+        KNIGHT: "♞",
+        PAWN: "♟"
+    },
+    {   # Empty (-1)
+        EMPTY_STR: " "   # Unicode U+2001
     }
+]
+
+NOTATION: [
+    {   # White (0)
+        KING: "K",
+        QUEEN: "Q",
+        ROOK: "R",
+        BISHOP: "B",
+        KNIGHT: "N",
+        PAWN: "P"
+    },
+    {   # Black (1)
+        KING: "k",
+        QUEEN: "q",
+        ROOK: "r",
+        BISHOP: "b",
+        KNIGHT: "n",
+        PAWN: "p"
+    },
+    {   # Empty (-1)
+        EMPTY_STR: "E"
+    }
+]
+
+MATERIAL: {
+    KING: float("inf"),
+    QUEEN: 9,
+    ROOK: 5,
+    BISHOP: 3,
+    KNIGHT: 3,
+    PAWN: 1,
+    EMPTY_STR: 0
 }
 
+# FEN
 DEFAULT_FEN: str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 NUMBER_OF_FEN_COMPONENTS: int = 6
 
-# CLI constants
+# CLI
 DIM: str = "\033[2m"
 BOLD: str = "\033[1m"
 RED: str = "\033[31m"
