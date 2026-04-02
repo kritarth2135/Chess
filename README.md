@@ -1,6 +1,8 @@
 # Chess
 This is a chess engine implemented in python.
 
+> Note: This is being rewritten in Java now
+
 ## Features
 What you __can__ do now:
 1. Import any game using a FEN string

@@ -30,7 +30,7 @@ class Board:
         FEN_data: dict[str, Any] | None = fen.fen_parser(fen_string)
         if not FEN_data:
             raise errors.InvalidFEN
-        
+
         self.active_color: int = FEN_data["active_color"]
         self.en_passant_squares: str = FEN_data["en_passant_squares"]
         self.halfmove_count: int = FEN_data["halfmove_count"]
@@ -68,7 +68,7 @@ class Board:
             print(f"{const.DIM}├───┼───┼───┼───┼───┼───┼───┼───┼───┤{const.RESET}")
         print(f"{const.DIM}│   │ A │ B │ C │ D │ E │ F │ G │ H │{const.RESET}")
         print(f"{const.DIM}└───┴───┴───┴───┴───┴───┴───┴───┴───┘{const.RESET}")
-        
+
         for pieces in self.captured_pieces:
             print(pieces.name)
 
@@ -78,7 +78,7 @@ class Board:
 
         legal_moves: list[PositionTuple] = []
         position: PositionTuple = piece.position
-        
+
         if piece.can_slide:
             directions: list[str] = piece.directions_to_get_possible_moves
 
