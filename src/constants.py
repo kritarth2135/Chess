@@ -27,9 +27,9 @@ X_VALUE: int = 0
 Y_VALUE: int = 1
 
 # Players
-EMPTY: int = -1
-WHITE: int = 0
-BLACK: int = 1
+EMPTY_PIECE: int = -1
+WHITE_PIECE: int = 0
+BLACK_PIECE: int = 1
 
 # Direction names
 UP: str = "up"
@@ -65,7 +65,6 @@ ROOK: str = "Rook"
 BISHOP: str = "Bishop"
 KNIGHT: str = "Knight"
 PAWN: str = "Pawn"
-EMPTY_STR: str = "Empty"
 
 CAPTURES: str = "captures"
 MOVES: str = "moves"
@@ -88,7 +87,7 @@ SYMBOL: [
         PAWN: "♟"
     },
     {   # Empty (-1)
-        EMPTY_STR: " "   # Unicode U+2001
+        EMPTY: " "   # Unicode U+2001
     }
 ]
 
@@ -110,18 +109,17 @@ NOTATION: [
         PAWN: "p"
     },
     {   # Empty (-1)
-        EMPTY_STR: "E"
+        EMPTY: "E"
     }
 ]
 
 MATERIAL: {
-    KING: float("inf"),
     QUEEN: 9,
     ROOK: 5,
     BISHOP: 3,
     KNIGHT: 3,
     PAWN: 1,
-    EMPTY_STR: 0
+    EMPTY: 0
 }
 
 # FEN

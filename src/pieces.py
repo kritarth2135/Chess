@@ -34,9 +34,9 @@ class Piece:
 
 
 class Empty(Piece):
-    name: str = const.EMPTY_STR
+    name: str = const.EMPTY
     material: int = const.symbol_notation_and_material[const.MATERIAL][name]
-    color: int = const.EMPTY
+    color: int = const.EMPTY_PLAYER
 
     def __init__(self, color: int, position: PositionTuple):
         super().__init__(Empty.color, position)

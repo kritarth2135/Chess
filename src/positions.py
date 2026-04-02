@@ -21,7 +21,6 @@ class PositionTuple:
     def __init__(self, position: tuple[int, int]) -> None:
         self.rank: int = position[0]
         self.file: int = position[1]
-        self.position: tuple[int, int] = position
 
 
     def __add__(self, other: PositionTuple) -> PositionTuple:
@@ -41,7 +40,7 @@ class PositionTuple:
     def __str__(self) -> str:
         """Returns the PositionTuple in a readable format"""
 
-        return f"({chr(ord("A") + self.file)}{const.GRID_SIZE - self.rank})"
+        return f"[{chr(ord("A") + self.file)}{const.GRID_SIZE - self.rank}]"
 
 
     def in_straight_direction(self, other: PositionTuple | Any) -> bool:
