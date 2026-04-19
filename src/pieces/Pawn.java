@@ -1,11 +1,15 @@
-package piece;
+package pieces;
 
 public class Pawn extends Piece {
-    public Pawn(int color, PositionTuple position) {
-        super(color, position);
+    private static String ICON_WHITE = "♙";
+    private static String ICON_BLACK = "♟";
 
-        name = Piece.PAWN;
+    public Pawn(Color color) {
+        this.color = color;
+
+        name = Pieces.KING;
         isSlider = false;
-        icon = Piece.ICONS[name];
+        isMoved = false;
+        icon = color == Color.WHITE ? ICON_WHITE : ICON_BLACK;
     }
 }

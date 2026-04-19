@@ -1,11 +1,15 @@
-package piece;
+package pieces;
 
 public class King extends Piece {
-    public King(int color, PositionTuple position) {
-        super(color, position);
+    private static String ICON_WHITE = "♔";
+    private static String ICON_BLACK = "♚";
 
-        name = Piece.KING;
+    public King(Color color) {
+        this.color = color;
+
+        name = Pieces.KING;
         isSlider = false;
-        icon = Piece.ICONS[name];
+        isMoved = false;
+        icon = color == Color.WHITE ? ICON_WHITE : ICON_BLACK;
     }
 }

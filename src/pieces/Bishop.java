@@ -1,11 +1,15 @@
-package piece;
+package pieces;
 
 public class Bishop extends Piece {
-    public Bishop(int color, PositionTuple position) {
-        super(color, position);
+    private static String ICON_WHITE = "♗";
+    private static String ICON_BLACK = "♝";
 
-        name = Piece.BISHOP;
+    public Bishop(Color color) {
+        this.color = color;
+
+        name = Pieces.BISHOP;
         isSlider = true;
-        icon = Piece.ICONS[name];
+        isMoved = false;
+        icon = color == Color.WHITE ? ICON_WHITE : ICON_BLACK;
     }
 }
