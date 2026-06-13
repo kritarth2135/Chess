@@ -1,8 +1,8 @@
-package positions;
+package src.positions;
 
 public class MovementTuple {
-    private PositionTuple initialPosition;
-    private PositionTuple finalPosition;
+    private final PositionTuple initialPosition;
+    private final PositionTuple finalPosition;
 
     public MovementTuple(PositionTuple initialPosition, PositionTuple finalPosition) {
         this.initialPosition = initialPosition;

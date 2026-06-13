@@ -1,40 +1,39 @@
-package fen;
+package src.fen;
 
-import java.util.Arrays;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static src.board.Board.BOARD_SIZE;
 
 public class Fen {
-    private static Pattern fenPattern = Pattern.compile(
+    private static final Pattern FEN_PATTERN = Pattern.compile(
         "^([1-8kqrbnp]+\\/){7}[1-8kqrbnp]+\\s[wb]\\s([-]|[kq]+)\\s([-]|[a-h][1-8])\\s(\\d+)\\s(\\d+)$",
         Pattern.CASE_INSENSITIVE
     );
 
     // Position data in a FEN string
-    private static int BOARD_STATE = 0;
-    private static int ACTIVE_COLOR = 1;
-    private static int CASTLING_AVAILABILITY = 2;
-    private static int EN_PASSANT_MOVE = 3;
-    private static int HALF_MOVE_COUNT = 4;
-    private static int FULL_MOVE_COUNT = 5;
+    private static final int BOARD_STATE = 0;
+    private static final int ACTIVE_COLOR = 1;
+    private static final int CASTLING_AVAILABILITY = 2;
+    private static final int EN_PASSANT_MOVE = 3;
+    private static final int HALF_MOVE_COUNT = 4;
+    private static final int FULL_MOVE_COUNT = 5;
 
-    private static int BOARD_SIZE = 8;
+    public char[][] boardState;
+    public char activeColor;
 
-    private char[][] boardState;
-    private char activeColor;
+    public boolean canWhiteCastleKingSide = false;
+    public boolean canWhiteCastleQueenSide = false;
+    public boolean canBlackCastleKingSide = false;
+    public boolean canBlackCastleQueenSide = false;
 
-    private boolean canWhiteCastleKingSide = false;
-    private boolean canWhiteCastleQueenSide = false;
-    private boolean canBlackCastleKingSide = false;
-    private boolean canBlackCastleQueenSide = false;
+    public String enPassantMove;
 
-    private String enPassantMove;
-
-    private int halfMoveCounter;
-    private int fullMoveCounter;
+    public int halfMoveCounter;
+    public int fullMoveCounter;
 
     public Fen(String fenString) throws InvalidFenStringException {
-        Matcher matcher = fenPattern.matcher(fenString);
+        Matcher matcher = FEN_PATTERN.matcher(fenString);
         if (!matcher.matches()) {
             throw new InvalidFenStringException();
         }
@@ -85,18 +84,10 @@ public class Fen {
     private void setCastlingAvailability(String castlingData) {
         for (char ch: castlingData.toCharArray()) {
             switch (ch) {
-                case 'K':
-                    canWhiteCastleKingSide = true;
-                    break;
-                case 'Q':
-                    canWhiteCastleQueenSide = true;
-                    break;
-                case 'k':
-                    canBlackCastleKingSide = true;
-                    break;
-                case 'q':
-                    canBlackCastleQueenSide = true;
-                    break;
+                case 'K' -> { canWhiteCastleKingSide = true; }
+                case 'Q' -> { canWhiteCastleQueenSide = true; }
+                case 'k' -> { canBlackCastleKingSide = true; }
+                case 'q' -> { canBlackCastleQueenSide = true; }
             }
         }
     }

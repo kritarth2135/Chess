@@ -1,7 +1,9 @@
-package positions;
+package src.positions;
 
 import java.util.Map;
 import java.util.HashMap;
+
+import static src.board.Board.BOARD_SIZE;
 
 public class PositionTuple {
     private static final Map<String, PositionTuple> RELATIVE_DIRS = new HashMap<>();
@@ -16,12 +18,17 @@ public class PositionTuple {
         RELATIVE_DIRS.put("downright", new PositionTuple(1, 1));
     }
 
-    private int rank;
-    private int file;
+    private final int rank;
+    private final int file;
 
     public PositionTuple(int rank, int file) {
         this.rank = rank;
         this.file = file;
+    }
+
+    public PositionTuple(String square) {
+        rank = 7 - ((square.charAt(1) - '0') - 1);
+        file = Character.toUpperCase(square.charAt(0)) - 'A';
     }
 
     public int rank() {
@@ -41,7 +48,7 @@ public class PositionTuple {
     }
 
     public boolean isOutOfBounds() {
-        return this.rank < 0 || this.rank >= 8 || this.file < 0 || this.file >= 8;
+        return this.rank < 0 || this.rank >= BOARD_SIZE || this.file < 0 || this.file >= BOARD_SIZE;
     }
 
     public PositionTuple getRelativeDirection(String direction) {

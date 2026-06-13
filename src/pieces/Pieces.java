@@ -1,4 +1,4 @@
-package pieces;
+package src.pieces;
 
 public enum Pieces {
     KING(0),
@@ -8,7 +8,7 @@ public enum Pieces {
     KNIGHT(4),
     PAWN(5);
 
-    private int value;
+    private final int value;
 
     private Pieces(int value) {
         this.value = value;

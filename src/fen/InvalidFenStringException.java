@@ -1,4 +1,4 @@
-package fen;
+package src.fen;
 
 public class InvalidFenStringException extends Exception {
     public InvalidFenStringException() {

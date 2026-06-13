@@ -1,8 +1,8 @@
-package pieces;
+package src.pieces;
 
 public class Queen extends Piece {
-    private static String ICON_WHITE = "♕";
-    private static String ICON_BLACK = "♛";
+    private static final String ICON_WHITE = "♕";
+    private static final String ICON_BLACK = "♛";
 
     public Queen(Color color) {
         this.color = color;

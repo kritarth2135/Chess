@@ -1,8 +1,8 @@
-package pieces;
+package src.pieces;
 
 public class Rook extends Piece {
-    private static String ICON_WHITE = "♖";
-    private static String ICON_BLACK = "♜";
+    private static final String ICON_WHITE = "♖";
+    private static final String ICON_BLACK = "♜";
 
     public Rook(Color color) {
         this.color = color;
